@@ -1,0 +1,157 @@
+﻿@model PersonalFinances.Models.ViewModels.ViewAccountViewModel
+
+@{
+    ViewBag.Title = "View account";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @ViewBag.Title
+            <small>View and manage your account</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("Index", "Accounts")">Accounts</a></li>
+            <li class="active">@ViewBag.Title</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <!-- box -->
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form role="form">
+                            <div class="row">
+                                <div class="col-xs-2">
+                                    <div class="form-group">
+                                        @Html.LabelFor(a => a.Account.Id)
+                                        @Html.TextBoxFor(a => a.Account.Id, new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(a => a.Account.Name)
+                                @Html.TextBoxFor(a => a.Account.Name, new { Class = "form-control", Readonly = "readonly" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(a => a.Account.AccountType)
+                                @Html.TextBoxFor(a => a.Account.AccountType, new { Class = "form-control", Readonly = "readonly" })
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(a => a.Account.InitialBalance)
+                                        @Html.TextBoxFor(a => a.Account.InitialBalance, new { Class = "form-control", Readonly = "readonly", Value = Model.Account.InitialBalance.ToString("F2") })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(a => a.Account.Balance)
+                                        @Html.TextBoxFor(a => a.Account.Balance, new { Class = "form-control", Readonly = "readonly", Value = Model.Account.Balance.ToString("F2") })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(a => a.Account.MonthlyBalance)
+                                        @Html.TextBoxFor(a => a.Account.MonthlyBalance, new { Class = "form-control", Readonly = "readonly", Value = Model.Account.MonthlyBalance.ToString("F2") })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(a => a.Account.TotalDebit)
+                                        @Html.TextBoxFor(a => a.Account.TotalDebit, new { Class = "form-control", Readonly = "readonly", Value = Model.Account.TotalDebit.ToString("F2") })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(a => a.Account.TotalCredit)
+                                        @Html.TextBoxFor(a => a.Account.TotalCredit, new { Class = "form-control", Readonly = "readonly", Value = Model.Account.TotalCredit.ToString("F2") })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br/>
+                            
+                            <a href="@Url.Action("Edit", "Accounts", new { Id = Model.Account.Id})" class="btn btn-sm btn-warning btn-flat pull-left"><i class="fa fa-pencil-square-o"></i> Edit account</a>
+                            <a href="@Url.Action("Delete", "Accounts", new { Id = Model.Account.Id})" class="btn btn-sm btn-danger btn-flat pull-left"><i class="fa fa-trash-o"></i> Delete account</a>
+                         </form>
+                    </div>
+                </div>
+               
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+
+        <!-- table-box -->
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Account movements</h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th>AccountingDate</th>
+                            <th>Total value</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var movement in Model.AccountMovements)
+                        {
+                            <tr>
+                                <td>@movement.Description</td>
+                                @if (movement.Type.Equals("C"))
+                                {
+                                    <td><span class="label label-success">Credit</span></td>
+                                }
+                                else
+                                {
+                                    <td><span class="label label-danger">Debit</span></td>
+                                }
+                                <td>@movement.AccountingDate.ToShortDateString()</td>
+                                <td>@movement.TotalValue.ToString("F2")</td>
+                                <td>@movement.Category.Name</td>
+                                @if (movement.MovementStatus.Equals(MovementStatus.Launched))
+                                {
+                                    <td class="text-green"><i class="fa fa-check"></i> @movement.MovementStatus</td>
+                                }
+                                else
+                                {
+                                    <td class="text-yellow"><i class="fa fa-exclamation-triangle"></i> @movement.MovementStatus</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.body -->
+            <div class="box-footer clearfix">
+                <a href="@Url.Action("New", "Movements")" class="btn btn-sm btn-info btn-flat pull-left"><i class="fa fa-plus"></i> New movement</a>
+            </div>
+            <!-- /.box-footer -->
+        </div>
+        <!-- ./table-box -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

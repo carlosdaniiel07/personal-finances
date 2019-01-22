@@ -1,0 +1,63 @@
+﻿@model PersonalFinances.Models.Account
+
+@{
+    ViewBag.Title = "Edit account";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @ViewBag.Title
+            <small>Edit an existing account</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("Index", "Accounts")">Accounts</a></li>
+            <li class="active">@ViewBag.Title</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <!-- box -->
+        <div class="box box-success">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form role="form" action="@Url.Action("Edit", "Accounts")" method="post">
+                            <span class="text-red">@Html.ValidationSummary()</span>
+
+                            <div class="form-group">
+                                @Html.LabelFor(a => a.Name)
+                                @Html.TextBoxFor(a => a.Name, new { Class = "form-control" })
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(a => a.AccountType)
+                                @Html.EnumDropDownListFor(a => a.AccountType, "(Select)", new { Class = "form-control selectpicker" })
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(a => a.InitialBalance)
+                                        @Html.TextBoxFor(a => a.InitialBalance, new { Class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            @Html.HiddenFor(a => a.Id)
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit" class="btn btn-primary btn-flat pull-left"><i class="fa fa-floppy-o"></i> Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

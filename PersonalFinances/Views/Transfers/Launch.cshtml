@@ -1,0 +1,68 @@
+﻿@model PersonalFinances.Models.Transfer
+
+@{
+    ViewBag.Title = "Launch transfer";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @ViewBag.Title
+            <small>Cancel a transfer</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("Index", "Transfers")">Transfers</a></li>
+            <li class="active">@ViewBag.Title</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <!-- box -->
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="alert alert-info alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <h4><i class="icon fa fa-warning"></i> Information</h4>
+                    This operation will generate a credit movement in the <strong>@Model.Target.Name</strong> account
+                    and a debit movement in <strong>@Model.Origin.Name</strong> account
+                </div>
+
+                <dl class="dl-horizontal">
+                    <dt>@Html.DisplayNameFor(t => t.Description)</dt>
+                    <dd>@Html.DisplayFor(t => t.Description)</dd>
+
+                    <dt>@Html.DisplayNameFor(t => t.InclusionDate)</dt>
+                    <dd>@Model.InclusionDate.ToShortDateString()</dd>
+
+                    <dt>@Html.DisplayNameFor(t => t.AccountingDate)</dt>
+                    <dd>@Model.AccountingDate.ToShortDateString()</dd>
+
+                    <dt>@Html.DisplayNameFor(t => t.Value)</dt>
+                    <dd>@Model.Value.ToString("F2")</dd>
+
+                    <dt>@Html.DisplayNameFor(t => t.Tax)</dt>
+                    <dd>@Model.Tax.Value.ToString("F2")</dd>
+
+
+                    <dt>@Html.DisplayNameFor(t => t.Observation)</dt>
+                    <dd>@Html.DisplayFor(t => t.Observation)</dd>
+                </dl>
+
+                <form action="@Url.Action("Launch", "Transfers")" method="post">
+                    @Html.HiddenFor(t => t.Id)
+                    @Html.AntiForgeryToken()
+
+                    <button type="submit" class="btn btn-flat btn-primary"><i class="fa fa-check"></i> Launch</button>
+                </form>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

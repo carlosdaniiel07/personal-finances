@@ -1,0 +1,68 @@
+﻿@model PersonalFinances.Models.ViewModels.DashboardViewModel
+
+@{ 
+    ViewBag.Title = "Dashboard";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-purple"><i class="fa fa-money"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Balance</span>
+                        <span class="info-box-number">@Model.TotalBalance.ToString("F2")</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-aqua"><i class="fa fa-balance-scale"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Balance on <strong>@DateTime.Today.ToString("MMMM")</strong></span>
+                        <span class="info-box-number">@Model.BalanceOnMonth.ToString("F2")</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-yellow"><i class="fa fa-files-o"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Movements</span>
+                        <span class="info-box-number">@Model.Movements</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <div class="col-md-3 col-sm-6 col-xs-12">
+                <div class="info-box">
+                    <span class="info-box-icon bg-red"><i class="fa fa-university"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Accounts</span>
+                        <span class="info-box-number">@Model.Accounts</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

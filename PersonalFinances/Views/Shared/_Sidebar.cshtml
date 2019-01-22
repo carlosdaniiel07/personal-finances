@@ -1,0 +1,33 @@
+﻿@using WebHelpers.Mvc5
+
+<aside class="main-sidebar">
+    <section class="sidebar">
+        <ul class="sidebar-menu" data-widget="tree">
+            <li class="header">MENU</li>
+            <li>
+                <a href="@Url.Action("Index", "Dashboard")"><i class="fa fa-tachometer"></i> <span>Dashboard</span></a>
+            </li>
+            <li>
+                <a href="@Url.Action("Index", "Accounts")"><i class="fa fa-university"></i> <span>Accounts</span></a>
+            </li>
+            <li>
+                <a href="@Url.Action("Index", "Movements")"><i class="fa fa-list"></i> <span>Movements</span></a>
+            </li>
+            <li>
+                <a href="@Url.Action("Index", "Transfers")"><i class="fa fa-exchange"></i> <span>Transfers</span></a>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-cogs"></i> <span>Manage</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="@Url.Action("Index", "Categories")"><i class="fa fa-circle-o"></i> Categories</a></li>
+                    <li><a href="@Url.Action("Index", "Subcategories")"><i class="fa fa-circle-o"></i> Subcategories</a></li>
+                </ul>
+            </li>
+        </ul>
+    </section>
+</aside>

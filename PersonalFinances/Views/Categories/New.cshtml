@@ -1,0 +1,65 @@
+﻿@model PersonalFinances.Models.Category
+
+@{
+    ViewBag.Title = "New category";
+
+    List<SelectListItem> categoryTypeComboBox = new List<SelectListItem>()
+    {
+        new SelectListItem { Text = "Credit", Value = "C" },
+        new SelectListItem { Text = "Debit", Value = "D" }
+    };
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @ViewBag.Title
+            <small>Add a new category</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("Index", "Categories")">Categories</a></li>
+            <li class="active">@ViewBag.Title</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <!-- box -->
+        <div class="box box-success">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form role="form" action="@Url.Action("New", "Categories")" method="post">
+                            <span class="text-red">@Html.ValidationSummary()</span>
+
+                            <div class="form-group">
+                                @Html.LabelFor(c => c.Name)
+                                @Html.TextBoxFor(c => c.Name, new { Class = "form-control" })
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(c => c.Type)
+                                        @Html.DropDownListFor(c => c.Type, categoryTypeComboBox, "(Choose one)", new { Class = "selectpicker" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit" class="btn btn-success btn-flat pull-left"><i class="fa fa-check"></i> Confirm</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

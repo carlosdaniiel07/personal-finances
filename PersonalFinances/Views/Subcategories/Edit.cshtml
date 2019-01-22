@@ -1,0 +1,62 @@
+﻿@model PersonalFinances.Models.ViewModels.SubcategoryViewModel
+
+@{
+    ViewBag.Title = "Edit subcategory";
+
+    SelectList categoriesComboBox = new SelectList(Model.Categories, "Id", "Name", "Type", new { });
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @ViewBag.Title
+            <small>Edit an existing subcategory</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("Index", "Subcategories")">Subcategories</a></li>
+            <li class="active">@ViewBag.Title</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <!-- box -->
+        <div class="box box-success">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form role="form" action="@Url.Action("Edit", "Subcategories")" method="post">
+                            <span class="text-red">@Html.ValidationSummary()</span>
+
+                            <div class="form-group">
+                                @Html.LabelFor(s => s.Subcategory.Name)
+                                @Html.TextBoxFor(s => s.Subcategory.Name, new { Class = "form-control" })
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(s => s.Subcategory.CategoryId)
+                                        @Html.DropDownListFor(s => s.Subcategory.CategoryId, categoriesComboBox, "(Choose one)", new { Class = "selectpicker" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            @Html.HiddenFor(s => s.Subcategory.Id)
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit" class="btn btn-primary btn-flat pull-left"><i class="fa fa-floppy-o"></i> Update</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

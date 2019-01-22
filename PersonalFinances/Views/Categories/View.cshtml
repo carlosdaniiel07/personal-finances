@@ -1,0 +1,193 @@
+﻿@model PersonalFinances.Models.ViewModels.ViewCategoryViewModel
+
+@{
+    ViewBag.Title = "View category";
+
+    string categoryType = (Model.Category.Type.Equals("C")) ? "Credit" : "Debit";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @ViewBag.Title
+            <small>View and manage a category</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("Index", "Categories")">Categories</a></li>
+            <li class="active">@ViewBag.Title</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-md-8">
+                <!-- box -->
+                <div class="box box-primary">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <form role="form">
+                                    <div class="row">
+                                        <div class="col-xs-2">
+                                            <div class="form-group">
+                                                @Html.LabelFor(c => c.Category.Id)
+                                                @Html.TextBoxFor(c => c.Category.Id, new { Class = "form-control", Readonly = "readonly" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.LabelFor(c => c.Category.Name)
+                                        @Html.TextBoxFor(c => c.Category.Name, new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                @Html.LabelFor(c => c.Category.Type)
+                                                @Html.TextBox("Type", categoryType, new { Class = "form-control", Readonly = "readonly" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                @Html.LabelFor(c => c.Category.TotalCredit)
+                                                @Html.TextBoxFor(c => c.Category.TotalCredit, new { Class = "form-control", Readonly = "readonly", Value = Model.Category.TotalCredit.ToString("F2") })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                @Html.LabelFor(c => c.Category.TotalDebit)
+                                                @Html.TextBoxFor(c => c.Category.TotalDebit, new { Class = "form-control", Readonly = "readonly", Value = Model.Category.TotalDebit.ToString("F2") })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                @Html.LabelFor(c => c.Category.CategoryBalance)
+                                                @Html.TextBoxFor(c => c.Category.CategoryBalance, new { Class = "form-control", Readonly = "readonly", Value = Model.Category.CategoryBalance.ToString("F2") })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <br />
+
+                                    <a href="@Url.Action("Edit", "Categories", new { Id = Model.Category.Id})" class="btn btn-sm btn-warning btn-flat pull-left"><i class="fa fa-pencil-square-o"></i> Edit category</a>
+                                    <a href="@Url.Action("Delete", "Categories", new { Id = Model.Category.Id})" class="btn btn-sm btn-danger btn-flat pull-left"><i class="fa fa-trash-o"></i> Delete category</a>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.box -->
+            </div>
+            <div class="col-md-4">
+                <!-- table-box -->
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Subcategories</h3>
+
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var subcategory in Model.Category.Subcategories)
+                                {
+                                    <tr>
+                                        <td>@subcategory.Name</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.body -->
+                    <div class="box-footer clearfix">
+                        <a href="@Url.Action("New", "Subcategories")" class="btn btn-sm btn-info btn-flat pull-left"><i class="fa fa-plus"></i> New subcategory</a>
+                    </div>
+                    <!-- /.box-footer -->
+                </div>
+                <!-- ./table-box -->
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="col-md-12">
+                <!-- table-box -->
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Last movements in @Model.Category.Name category</h3>
+
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Type</th>
+                                    <th>AccountingDate</th>
+                                    <th>Total value</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var movement in Model.Category.Movements.Take(5).OrderByDescending(m => m.Id))
+                                {
+                                    <tr>
+                                        <td>@movement.Description</td>
+                                        @if (movement.Type.Equals("C"))
+                                        {
+                                            <td><span class="label label-success">Credit</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td><span class="label label-danger">Debit</span></td>
+                                        }
+                                        <td>@movement.AccountingDate.ToShortDateString()</td>
+                                        <td>@movement.TotalValue.ToString("F2")</td>
+                                        @if (movement.MovementStatus.Equals(MovementStatus.Launched))
+                                        {
+                                            <td class="text-green"><i class="fa fa-check"></i> @movement.MovementStatus</td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-yellow"><i class="fa fa-exclamation-triangle"></i> @movement.MovementStatus</td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.body -->
+                    <div class="box-footer clearfix">
+                        <a href="@Url.Action("New", "Movements")" class="btn btn-sm btn-info btn-flat pull-left"><i class="fa fa-plus"></i> New movement</a>
+                    </div>
+                    <!-- /.box-footer -->
+                </div>
+                <!-- ./table-box -->
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
