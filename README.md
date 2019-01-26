@@ -3,7 +3,7 @@ Personal Finances
 ![](https://i.imgur.com/pHdPftf.png)
 
 ## About
-Personal Finances is a simple personal finances managament system. With it you can manage your finances, inserting your expenses and your savings in a custom created account and divide them by category and by subcategory
+Personal Finances is a simple personal finances managament system. With it you can manage your finances inserting your expenses and your savings in a custom created account and divide them by category and by subcategory
 
 ## Features
 * Debit and credit movements insertion
