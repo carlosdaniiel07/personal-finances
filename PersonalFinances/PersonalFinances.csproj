@@ -128,6 +128,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\css\datatables.min.css" />
+    <Content Include="Content\js\plugins\data-tables\datatables.min.js" />
     <Content Include="Content\js\plugins\jquery-mask\jquery.mask.js" />
     <Content Include="Content\js\plugins\validator\jquery.validate.min.js" />
     <Content Include="Content\js\plugins\validator\jquery.validate.unobtrusive.min.js" />
@@ -167,6 +169,7 @@
     <Content Include="Views\Errors\Error.cshtml" />
     <Content Include="Views\Errors\NotFound.cshtml" />
     <Content Include="Views\Errors\ServerError.cshtml" />
+    <None Include="Properties\PublishProfiles\personal-finances - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -7,6 +7,11 @@
         todayHighlight: true
     });
 
+    // DataTable
+    $('.datatable').DataTable({
+        "scrollX": true
+    });
+
     // jQuery Mask
     $('.money').mask("###0,00", { reverse: true });
 
