@@ -34,7 +34,7 @@ Personal Finances is a simple personal finances managament system. With it you c
   * Dependencies
      * A relational database like SQL Server, SQLite, MySQL or PostgreSQL (go to [Entity Framework 6 Providers](https://docs.microsoft.com/pt-br/ef/ef6/fundamentals/providers/) to see the supported providers)
   * Clone this repository `https://github.com/carlosdaniiel07/personal-finances.git`
-  * Configure your connection string on `Web.config` (see [Connection Strings Reference](https://www.connectionstrings.com/) if you need help
+  * Configure your connection string on `Web.config` (see [Connection Strings Reference](https://www.connectionstrings.com/) if you need help)
   * Generate a database with the command `Update-Database` on Package Manager Console
   * Build and run the application
  
