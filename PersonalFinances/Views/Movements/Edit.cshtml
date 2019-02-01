@@ -81,19 +81,19 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         @Html.LabelFor(m => m.Movement.AccountId)
-                                        @Html.DropDownListFor(m => m.Movement.AccountId, accountsComboBox, "(Choose one)", new { Class = "selectpicker" })
+                                        @Html.DropDownListFor(m => m.Movement.AccountId, accountsComboBox, "(Choose one)", new { Class = "selectpicker form-control" })
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         @Html.LabelFor(m => m.Movement.CategoryId)
-                                        @Html.DropDownListFor(m => m.Movement.CategoryId, categoriesComboBox, "(Choose one)", new { Class = "selectpicker" })
+                                        @Html.DropDownListFor(m => m.Movement.CategoryId, categoriesComboBox, "(Choose one)", new { Class = "selectpicker form-control" })
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         @Html.LabelFor(m => m.Movement.SubcategoryId)
-                                        @Html.DropDownListFor(m => m.Movement.SubcategoryId, subcategoriesComboBox, "(Choose one)", new { Class = "selectpicker" })
+                                        @Html.DropDownListFor(m => m.Movement.SubcategoryId, subcategoriesComboBox, "(Choose one)", new { Class = "selectpicker form-control" })
                                     </div>
                                 </div>
                             </div>
@@ -101,7 +101,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         @Html.LabelFor(m => m.Movement.MovementStatus)
-                                        @Html.DropDownListFor(m => m.Movement.MovementStatus, movementStatusComboBox, new { Class = "selectpicker" })
+                                        @Html.DropDownListFor(m => m.Movement.MovementStatus, movementStatusComboBox, new { Class = "selectpicker form-control" })
                                     </div>
                                 </div>
                             </div>

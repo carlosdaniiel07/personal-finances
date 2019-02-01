@@ -73,13 +73,13 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 @Html.LabelFor(t => t.Transfer.OriginId)
-                                                @Html.DropDownListFor(t => t.Transfer.OriginId, accountsComboBox, "(Choose one)", new { Class = "selectpicker" })
+                                                @Html.DropDownListFor(t => t.Transfer.OriginId, accountsComboBox, "(Choose one)", new { Class = "selectpicker form-control" })
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 @Html.LabelFor(t => t.Transfer.TargetId)
-                                                @Html.DropDownListFor(t => t.Transfer.TargetId, accountsComboBox, "(Choose one)", new { Class = "selectpicker" })
+                                                @Html.DropDownListFor(t => t.Transfer.TargetId, accountsComboBox, "(Choose one)", new { Class = "selectpicker form-control" })
                                             </div>
                                         </div>
                                     </div>
@@ -87,7 +87,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 @Html.LabelFor(t => t.Transfer.TransferStatus)
-                                                @Html.DropDownListFor(t => t.Transfer.TransferStatus, transferStatusComboBox, new { Class = "selectpicker" })
+                                                @Html.DropDownListFor(t => t.Transfer.TransferStatus, transferStatusComboBox, new { Class = "selectpicker form-control" })
                                             </div>
                                         </div>
                                     </div>
