@@ -37,6 +37,3 @@ Personal Finances is a simple personal finances managament system. With it you c
   * Configure your connection string on `Web.config` (see [Connection Strings Reference](https://www.connectionstrings.com/) if you need help)
   * Generate a database with the command `Update-Database` on Package Manager Console
   * Build and run the application
- 
- ## Live preview
-  * The demo is available [here](https://personal-finances.azurewebsites.net/)
