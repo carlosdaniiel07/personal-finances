@@ -13,6 +13,7 @@
     SelectList accountsComboBox = new SelectList(Model.Accounts, "Id", "Name", "AccountType", new { });
     SelectList subcategoriesComboBox = new SelectList(Model.Subcategories, "Id", "Name", "Category.Name", new { });
     SelectList movementStatusComboBox = new SelectList(Enum.GetNames(typeof(MovementStatus)));
+    SelectList projectsComboBox = new SelectList(Model.Projects, "Id", "Name", new { });
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -32,6 +33,54 @@
 
     <!-- Main content -->
     <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- projects-box -->
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Projects</h3>
+
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Project</th>
+                                    <th>Budget</th>
+                                    <th>Balance</th>
+                                    <th>Left budget</th>
+                                    <th>Budget used (%)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var project in Model.Projects)
+                                {
+                                    <tr>
+                                        <td>@project.Name</td>
+                                        <td>@project.Budget.GetValueOrDefault().ToString("F2")</td>
+                                        <td>@project.ProjectBalance.ToString("F2")</td>
+                                        <td>@project.LeftBudget.ToString("F2")</td>
+                                        <td>
+                                            @{ var projectBudgetUsedPercentage = project.BudgetUsedPercentage; }
+                                            <div class="progress progress-xs" title="@projectBudgetUsedPercentage%">
+                                                <div class="progress-bar progress-bar-danger" style="width: @Math.Ceiling(projectBudgetUsedPercentage)%"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.projects-box -->
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-9">
                 <!-- box -->
@@ -112,6 +161,16 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                @Html.LabelFor(m => m.Movement.ProjectId)
+                                                @Html.DropDownListFor(m => m.Movement.ProjectId, projectsComboBox, "(Optional)", new { Class = "selectpicker form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,16 +21,16 @@ namespace PersonalFinances.Services
         /// Get all transfers
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Transfer> GetAll ()
+        public async Task<IEnumerable<Transfer>> GetAll ()
         {
-            return _repository.GetAllTransfers();
+            return await _repository.GetAllTransfers();
         }
 
         /// <summary>
         /// Add a new transfer
         /// </summary>
         /// <param name="transfer"></param>
-        public void Add (Transfer transfer)
+        public async Task Add (Transfer transfer)
         {
             transfer.Tax = transfer.Tax ?? 0;
             transfer.InclusionDate = DateTime.Now;
@@ -39,44 +40,44 @@ namespace PersonalFinances.Services
 
             if (transfer.TransferStatus.Equals(MovementStatus.Launched))
             {
-                _movementService.Add(CreateTransferMovement(transfer, "C"));
-                _movementService.Add(CreateTransferMovement(transfer, "D"));
+                await _movementService.Add(await CreateTransferMovement(transfer, "C"));
+                await _movementService.Add(await CreateTransferMovement(transfer, "D"));
             }
 
-            _repository.Insert(transfer);
+            await _repository.Insert(transfer);
         }
 
         /// <summary>
         /// Cancel an existing transfer
         /// </summary>
-        public void Cancel (int id)
+        public async Task Cancel (int id)
         {
-            var transfer = GetById(id);
+            var transfer = await GetById(id);
 
             if (transfer.TransferStatus.Equals(MovementStatus.Launched))
             {
-                _movementService.Add(CreateTransferMovement(transfer, "C", true));
-                _movementService.Add(CreateTransferMovement(transfer, "D", true));
+                await _movementService.Add(await CreateTransferMovement(transfer, "C", true));
+                await _movementService.Add(await CreateTransferMovement(transfer, "D", true));
             }
 
-            _repository.Delete(transfer);
+            await _repository.Delete(transfer);
         }
 
         /// <summary>
         /// Launch a pending transfer
         /// </summary>
-        public void Launch (int id)
+        public async Task Launch (int id)
         {
-            var transfer = GetById(id);
+            var transfer = await GetById(id);
 
             if (transfer.TransferStatus.Equals(MovementStatus.Pending))
             {
                 transfer.TransferStatus = MovementStatus.Launched;
 
-                _movementService.Add(CreateTransferMovement(transfer, "C"));
-                _movementService.Add(CreateTransferMovement(transfer, "D"));
+                await _movementService.Add(await CreateTransferMovement(transfer, "C"));
+                await _movementService.Add(await CreateTransferMovement(transfer, "D"));
 
-                _repository.Update(transfer);
+                await _repository.Update(transfer);
             }
         }
 
@@ -85,9 +86,9 @@ namespace PersonalFinances.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Transfer GetById (int id)
+        public async Task<Transfer> GetById (int id)
         {
-            var transfer = _repository.GetTransferById(id);
+            var transfer = await _repository.GetTransferById(id);
 
             if (transfer != null)
                 return transfer;
@@ -103,11 +104,11 @@ namespace PersonalFinances.Services
         /// <param name="categoryId"></param>
         /// <param name="subcategoryId"></param>
         /// <returns></returns>
-        private Movement CreateTransferMovement (Transfer transfer, string type)
+        private async Task<Movement> CreateTransferMovement (Transfer transfer, string type)
         {
-            var category = _categoryService.GetByName("Transfer", type);
+            var category = await _categoryService.GetByName("Transfer", type);
             var subcategory = category.Subcategories.First();
-            var accountName = _accountService.GetAccountNameById((type.Equals("C") ? transfer.OriginId : transfer.TargetId));
+            var accountName = await _accountService.GetAccountNameById((type.Equals("C") ? transfer.OriginId : transfer.TargetId));
             accountName = accountName.Substring(0, (accountName.Length >= 27) ? 27 : accountName.Length).Trim();
 
             return new Movement
@@ -133,11 +134,11 @@ namespace PersonalFinances.Services
         /// <param name="subcategoryId"></param>
         /// <param name="reversal"></param>
         /// <returns></returns>
-        private Movement CreateTransferMovement(Transfer transfer, string type, bool reversal)
+        private async Task<Movement> CreateTransferMovement(Transfer transfer, string type, bool reversal)
         {
-            var category = _categoryService.GetByName("Transfer", type);
+            var category = await _categoryService.GetByName("Transfer", type);
             var subcategory = category.Subcategories.First();
-            var accountName = _accountService.GetAccountNameById((type.Equals("C") ? transfer.TargetId : transfer.OriginId));
+            var accountName = await _accountService.GetAccountNameById((type.Equals("C") ? transfer.TargetId : transfer.OriginId));
             accountName = accountName.Substring(0, (accountName.Length >= 15) ? 15 : accountName.Length).Trim();
 
             return new Movement

@@ -1,9 +1,9 @@
 ﻿using System.Net;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Data.Entity.Infrastructure;
 
 using PersonalFinances.Models;
-using PersonalFinances.Models.ViewModels;
 using PersonalFinances.Services;
 using PersonalFinances.Services.Exceptions;
 
@@ -14,18 +14,17 @@ namespace PersonalFinances.Controllers
         private CategoryService _service = new CategoryService();
 
         // GET: Categories
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View(_service.GetAll());
+            return View(await _service.GetAll());
         }
 
         // GET: Categories/View
-        public ActionResult View (int? Id)
+        public async Task<ActionResult> View (int? Id)
         {
             try
             {
-                var viewModel = new ViewCategoryViewModel { Category = _service.GetById(Id.GetValueOrDefault()) };
-                return View(viewModel);
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
@@ -42,13 +41,13 @@ namespace PersonalFinances.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult New (Category category)
+        public async Task<ActionResult> New (Category category)
         {
             if(ModelState.IsValid)
             {
                 try
                 {
-                    _service.Add(category);
+                    await _service.Add(category);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ModelValidationException e)
@@ -69,11 +68,11 @@ namespace PersonalFinances.Controllers
         }
 
         // GET: Categories/Edit
-        public ActionResult Edit (int? Id)
+        public async Task<ActionResult> Edit (int? Id)
         {
             try
             {
-                return View(_service.GetById(Id.GetValueOrDefault()));
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
@@ -84,13 +83,13 @@ namespace PersonalFinances.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit (int Id, Category category)
+        public async Task<ActionResult> Edit (int Id, Category category)
         {
             if(ModelState.IsValid && Id.Equals(category.Id))
             {
                 try
                 {
-                    _service.Update(category);
+                    await _service.Update(category);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ModelValidationException e)
@@ -116,11 +115,11 @@ namespace PersonalFinances.Controllers
         }
 
         // GET: Categories/Delete
-        public ActionResult Delete (int? Id)
+        public async Task<ActionResult> Delete (int? Id)
         {
             try
             {
-                return View(_service.GetById(Id.GetValueOrDefault()));
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
@@ -131,11 +130,11 @@ namespace PersonalFinances.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete (int Id)
+        public async Task<ActionResult> Delete (int Id)
         {
             try
             {
-                _service.Remove(Id);
+                await _service.Remove(Id);
                 return RedirectToAction(nameof(Index));
             }
             catch (NotFoundException e)

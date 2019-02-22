@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Linq;
 using System.Data.Entity;
 
 using PersonalFinances.Models;
+using PersonalFinances.Models.ViewModels;
 
 namespace PersonalFinances.Repositories
 {
@@ -12,15 +15,48 @@ namespace PersonalFinances.Repositories
         /// Get all movements
         /// </summary
         /// <returns></returns>
-        public IEnumerable<Movement> GetAllMovements()
+        public async Task<IEnumerable<Movement>> GetAllMovements()
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Movements
+                return await context.Movements
                     .Include(m => m.Account)
                     .Include(m => m.Category)
                     .Include(m => m.Subcategory)
-                .ToList();
+                    .Include(m => m.Project)
+                .ToListAsync();
+            }
+        }
+
+        /// <summary>
+        /// Get all movements (filter by account and accounting date range)
+        /// </summary
+        /// <returns></returns>
+        public async Task<IEnumerable<Movement>> GetAllMovements(BankStatementViewModel bankStatement)
+        {
+            using (DatabaseContext context = new DatabaseContext())
+            {
+                IQueryable<Movement> query = context.Movements
+                    .Include(m => m.Account)
+                    .Include(m => m.Category)
+                    .Include(m => m.Subcategory)
+                    .Include(m => m.Project)
+                .Where(m => m.Account.Id.Equals(bankStatement.Account));
+
+                if (bankStatement.Category.HasValue)
+                    query = query.Where(m => m.Category.Id.Equals(bankStatement.Category.Value));
+                if (bankStatement.Subcategory.HasValue)
+                    query = query.Where(m => m.Subcategory.Id.Equals(bankStatement.Subcategory.Value));
+                if (bankStatement.Project.HasValue)
+                    query = query.Where(m => m.Project.Id.Equals(bankStatement.Project.Value));
+                if (bankStatement.StartDate.HasValue)
+                    query = query.Where(m => m.AccountingDate >= bankStatement.StartDate.Value);
+                if (bankStatement.EndDate.HasValue)
+                    query = query.Where(m => m.AccountingDate <= bankStatement.EndDate.Value);
+                if (bankStatement.MovementStatus.HasValue)
+                    query = query.Where(m => m.MovementStatus == bankStatement.MovementStatus.Value);
+
+                return await query.ToListAsync();
             }
         }
 
@@ -29,15 +65,34 @@ namespace PersonalFinances.Repositories
         /// </summary>
         /// <param name="accountId"></param>
         /// <returns></returns>
-        public IEnumerable<Movement> GetMovementsByAccount(int accountId)
+        public async Task<IEnumerable<Movement>> GetMovementsByAccount(int accountId)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Movements
+                return await context.Movements
                     .Include(m => m.Account)
                     .Include(m => m.Category)
                     .Include(m => m.Subcategory)
-                .Where(m => m.Account.Id.Equals(accountId)).ToList();
+                    .Include(m => m.Project)
+                .Where(m => m.Account.Id.Equals(accountId)).ToListAsync();
+            }
+        }
+
+        /// <summary>
+        /// Get movements per project
+        /// </summary>
+        /// <param name="projectIdId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Movement>> GetMovementsByProject (int projectId)
+        {
+            using (DatabaseContext context = new DatabaseContext())
+            {
+                return await context.Movements
+                    .Include(m => m.Account)
+                    .Include(m => m.Category)
+                    .Include(m => m.Subcategory)
+                    .Include(m => m.Project)
+                .Where(m => m.Project.Id.Equals(projectId)).ToListAsync();
             }
         }
 
@@ -46,15 +101,16 @@ namespace PersonalFinances.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Movement GetMovementById(int id)
+        public async Task<Movement> GetMovementById(int id)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Movements
+                return await context.Movements
                     .Include(m => m.Account)
                     .Include(m => m.Category)
                     .Include(m => m.Subcategory)
-                .SingleOrDefault(m => m.Id.Equals(id));
+                    .Include(m => m.Project)
+                .SingleOrDefaultAsync(m => m.Id.Equals(id));
             }
         }
 
@@ -62,12 +118,12 @@ namespace PersonalFinances.Repositories
         /// Insert a new movement
         /// </summary>
         /// <param name="movement"></param>
-        public void Insert (Movement movement)
+        public async Task Insert (Movement movement)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
                 context.Movements.Add(movement);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 
@@ -75,12 +131,12 @@ namespace PersonalFinances.Repositories
         /// Update an existing movement
         /// </summary>
         /// <param name="movement"></param>
-        public void Update (Movement movement)
+        public async Task Update (Movement movement)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
                 context.Entry(movement).State = EntityState.Modified;
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 
@@ -88,12 +144,12 @@ namespace PersonalFinances.Repositories
         /// Delete a movement
         /// </summary>
         /// <param name="movement"></param>
-        public void Remove (Movement movement)
+        public async Task Remove (Movement movement)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
                 context.Entry(movement).State = EntityState.Deleted;
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
     }

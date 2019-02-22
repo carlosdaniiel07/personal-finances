@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -13,14 +13,14 @@ namespace PersonalFinances.Repositories
         /// Get all transfers
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Transfer> GetAllTransfers ()
+        public async Task<IEnumerable<Transfer>> GetAllTransfers ()
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Transfers
+                return await context.Transfers
                     .Include(t => t.Origin)
                     .Include(t => t.Target)
-                .ToList();
+                .ToListAsync();
             }
         }
 
@@ -29,14 +29,14 @@ namespace PersonalFinances.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Transfer GetTransferById (int id)
+        public async Task<Transfer> GetTransferById (int id)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Transfers
+                return await context.Transfers
                     .Include(t => t.Origin)
                     .Include(t => t.Target)
-                .SingleOrDefault(t => t.Id.Equals(id));
+                .SingleOrDefaultAsync(t => t.Id.Equals(id));
             }
         }
 
@@ -44,12 +44,12 @@ namespace PersonalFinances.Repositories
         /// Insert a new transfer
         /// </summary>
         /// <param name="transfer"></param>
-        public void Insert (Transfer transfer)
+        public async Task Insert (Transfer transfer)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
                 context.Transfers.Add(transfer);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 
@@ -57,12 +57,12 @@ namespace PersonalFinances.Repositories
         /// Update an existing transfer
         /// </summary>
         /// <param name="transfer"></param>
-        public void Update (Transfer transfer)
+        public async Task Update (Transfer transfer)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
                 context.Entry(transfer).State = EntityState.Modified;
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 
@@ -70,12 +70,12 @@ namespace PersonalFinances.Repositories
         /// Delete an existing transfer
         /// </summary>
         /// <param name="id"></param>
-        public void Delete (Transfer transfer)
+        public async Task Delete (Transfer transfer)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
                 context.Entry(transfer).State = EntityState.Deleted;
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
     }

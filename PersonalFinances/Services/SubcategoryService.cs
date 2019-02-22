@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -16,9 +17,9 @@ namespace PersonalFinances.Services
         /// Get all subcategories
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Subcategory> GetAll ()
+        public async Task<IEnumerable<Subcategory>> GetAll ()
         {
-            return _repository.GetSubcategories();
+            return await _repository.GetSubcategories();
         }
 
         /// <summary>
@@ -26,9 +27,9 @@ namespace PersonalFinances.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Subcategory GetById (int id)
+        public async Task<Subcategory> GetById (int id)
         {
-            var subcategory = _repository.GetSubcategoryById(id);
+            var subcategory = await _repository.GetSubcategoryById(id);
 
             if (subcategory != null)
                 return subcategory;
@@ -40,13 +41,13 @@ namespace PersonalFinances.Services
         /// Insert a new subcategory
         /// </summary>
         /// <param name="subcategory"></param>
-        public void Add (Subcategory subcategory)
+        public async Task Add (Subcategory subcategory)
         {
             subcategory.Enabled = true;
-            var nameExists = _repository.GetSubcategoryByName(subcategory.Name, subcategory.CategoryId) != null;
+            var nameExists = (await _repository.GetSubcategoryByName(subcategory.Name, subcategory.CategoryId)) != null;
 
             if (!nameExists)
-                _repository.Insert(subcategory);
+                await _repository.Insert(subcategory);
             else
                 throw new AlreadyExistsException($"Already exists a subcategory {subcategory.Name} in this category");
         }
@@ -55,16 +56,16 @@ namespace PersonalFinances.Services
         /// Update an existing subcategory
         /// </summary>
         /// <param name="subcategory"></param>
-        public void Update (Subcategory subcategory)
+        public async Task Update (Subcategory subcategory)
         {
             var currentSubcategory = GetById(subcategory.Id);
-            var quantity = _repository.GetSubcategoriesByName(subcategory.Name, subcategory.CategoryId)
+            var quantity = (await _repository.GetSubcategoriesByName(subcategory.Name, subcategory.CategoryId))
                 .Count(s => !s.Id.Equals(currentSubcategory.Id));
 
             subcategory.Enabled = true;
             
             if (quantity.Equals(0))
-                _repository.Update(subcategory);
+                await _repository.Update(subcategory);
             else
                 throw new AlreadyExistsException($"Already exists a subcategory {subcategory.Name} in this category");
         }
@@ -73,24 +74,24 @@ namespace PersonalFinances.Services
         /// Delete an subcategory
         /// </summary>
         /// <param name="id"></param>
-        public void Delete (int id)
+        public async Task Delete (int id)
         {
-            var subcategory = GetById(id);
+            var subcategory = await GetById(id);
             subcategory.Enabled = false;
 
-            _repository.Update(subcategory);
+            await _repository.Update(subcategory);
         }
 
         /// <summary>
         /// Delete a collection of subcategory
         /// </summary>
         /// <param name="subcategories"></param>
-        public void Delete (ICollection<Subcategory> subcategories)
+        public async Task Delete (ICollection<Subcategory> subcategories)
         {
             Func<Subcategory, Subcategory> disableSubcategoryAction = (s) => { s.Enabled = false; return s; };
             subcategories = subcategories.Select(disableSubcategoryAction).ToList();
 
-            _repository.Update(subcategories);
+            await _repository.Update(subcategories);
         }
     }
 }

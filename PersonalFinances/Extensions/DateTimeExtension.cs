@@ -3,13 +3,13 @@
     public static class DateTimeExtension
     {
         /// <summary>
-        /// Convert a datetime object to database format (yyyy-mm-dd)
+        /// Get a date string (dd/MM/yyyy) from a DateTime object. If DateTime's ticks equals 0, then return a empty string
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static string ToDatabaseFormat (this DateTime obj)
+        public static string ToShortDateStringDefaultIfNull (this DateTime obj)
         {
-            return obj.ToString("yyyy-MM-dd");
+            return (obj.Ticks.Equals(0L)) ? "" : obj.ToShortDateString();
         }
     }
 }

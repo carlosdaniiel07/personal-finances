@@ -16,11 +16,13 @@ namespace PersonalFinances.Models
         public Account Origin { get; set; }
 
         [Required]
+        [Display(Name = "Origin account")]
         public int OriginId { get; set; }
 
         public Account Target { get; set; }
 
         [Required]
+        [Display(Name = "Target account")]
         public int TargetId { get; set; }
 
         [Required]
@@ -29,14 +31,19 @@ namespace PersonalFinances.Models
 
         public double? Tax { get; set; }
 
+        [Display(Name = "Inclusion date")]
         public DateTime InclusionDate { get; set; }
+
+        [Display(Name = "Accounting date")]
         public DateTime AccountingDate { get; set; }
 
         [Required]
+        [Display(Name = "Status")]
         public MovementStatus TransferStatus { get; set; }
 
         public string Observation { get; set; }
 
+        [Display(Name = "Total value")]
         public double TotalValue
         {
             get

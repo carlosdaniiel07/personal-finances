@@ -1,9 +1,9 @@
-﻿@model PersonalFinances.Models.ViewModels.ViewCategoryViewModel
+﻿@model PersonalFinances.Models.Category
 
 @{
     ViewBag.Title = "View category";
 
-    string categoryType = (Model.Category.Type.Equals("C")) ? "Credit" : "Debit";
+    string categoryType = (Model.Type.Equals("C")) ? "Credit" : "Debit";
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -34,19 +34,19 @@
                                     <div class="row">
                                         <div class="col-xs-2">
                                             <div class="form-group">
-                                                @Html.LabelFor(c => c.Category.Id)
-                                                @Html.TextBoxFor(c => c.Category.Id, new { Class = "form-control", Readonly = "readonly" })
+                                                @Html.LabelFor(c => c.Id)
+                                                @Html.TextBoxFor(c => c.Id, new { Class = "form-control", Readonly = "readonly" })
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        @Html.LabelFor(c => c.Category.Name)
-                                        @Html.TextBoxFor(c => c.Category.Name, new { Class = "form-control", Readonly = "readonly" })
+                                        @Html.LabelFor(c => c.Name)
+                                        @Html.TextBoxFor(c => c.Name, new { Class = "form-control", Readonly = "readonly" })
                                     </div>
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                @Html.LabelFor(c => c.Category.Type)
+                                                @Html.LabelFor(c => c.Type)
                                                 @Html.TextBox("Type", categoryType, new { Class = "form-control", Readonly = "readonly" })
                                             </div>
                                         </div>
@@ -54,28 +54,28 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                @Html.LabelFor(c => c.Category.TotalCredit)
-                                                @Html.TextBoxFor(c => c.Category.TotalCredit, new { Class = "form-control", Readonly = "readonly", Value = Model.Category.TotalCredit.ToString("F2") })
+                                                @Html.LabelFor(c => c.TotalCredit)
+                                                @Html.TextBoxFor(c => c.TotalCredit, new { Class = "form-control", Readonly = "readonly", Value = Model.TotalCredit.ToString("F2") })
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                @Html.LabelFor(c => c.Category.TotalDebit)
-                                                @Html.TextBoxFor(c => c.Category.TotalDebit, new { Class = "form-control", Readonly = "readonly", Value = Model.Category.TotalDebit.ToString("F2") })
+                                                @Html.LabelFor(c => c.TotalDebit)
+                                                @Html.TextBoxFor(c => c.TotalDebit, new { Class = "form-control", Readonly = "readonly", Value = Model.TotalDebit.ToString("F2") })
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                @Html.LabelFor(c => c.Category.CategoryBalance)
-                                                @Html.TextBoxFor(c => c.Category.CategoryBalance, new { Class = "form-control", Readonly = "readonly", Value = Model.Category.CategoryBalance.ToString("F2") })
+                                                @Html.LabelFor(c => c.CategoryBalance)
+                                                @Html.TextBoxFor(c => c.CategoryBalance, new { Class = "form-control", Readonly = "readonly", Value = Model.CategoryBalance.ToString("F2") })
                                             </div>
                                         </div>
                                     </div>
 
                                     <br />
 
-                                    <a href="@Url.Action("Edit", "Categories", new { Id = Model.Category.Id})" class="btn btn-sm btn-warning btn-flat pull-left"><i class="fa fa-pencil-square-o"></i> Edit category</a>
-                                    <a href="@Url.Action("Delete", "Categories", new { Id = Model.Category.Id})" class="btn btn-sm btn-danger btn-flat pull-left"><i class="fa fa-trash-o"></i> Delete category</a>
+                                    <a href="@Url.Action("Edit", "Categories", new { Id = Model.Id})" class="btn btn-sm btn-warning btn-flat pull-left"><i class="fa fa-pencil-square-o"></i> Edit category</a>
+                                    <a href="@Url.Action("Delete", "Categories", new { Id = Model.Id})" class="btn btn-sm btn-danger btn-flat pull-left"><i class="fa fa-trash-o"></i> Delete category</a>
                                 </form>
                             </div>
                         </div>
@@ -106,7 +106,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var subcategory in Model.Category.Subcategories)
+                                @foreach (var subcategory in Model.Subcategories)
                                 {
                                     <tr>
                                         <td>@subcategory.Name</td>
@@ -130,7 +130,7 @@
                 <!-- table-box -->
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title">Last movements in @Model.Category.Name category</h3>
+                        <h3 class="box-title">Last movements in @Model.Name category</h3>
 
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse">
@@ -151,7 +151,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var movement in Model.Category.Movements.Take(5).OrderByDescending(m => m.Id))
+                                @foreach (var movement in Model.Movements.Take(5).OrderByDescending(m => m.Id))
                                 {
                                     <tr>
                                         <td>@movement.Description</td>

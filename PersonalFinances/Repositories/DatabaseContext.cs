@@ -12,6 +12,7 @@ namespace PersonalFinances.Repositories
         public DbSet<Subcategory> Subcategories { get; set; }
         public DbSet<Movement> Movements { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
+        public DbSet<Project> Projects { get; set; }
 
         public DatabaseContext() 
             : base("ConnectionString")

@@ -6,7 +6,8 @@
     SelectList categoriesComboBox = new SelectList(Model.Categories, "Id", "Name", "Type", new { });
     SelectList accountsComboBox = new SelectList(Model.Accounts, "Id", "Name", "AccountType", new { });
     SelectList subcategoriesComboBox = new SelectList(Model.Subcategories, "Id", "Name", "Category.Name", new { });
-    SelectList movementStatusComboBox = new SelectList(Enum.GetNames(typeof(PersonalFinances.Models.Enums.MovementStatus)));
+    SelectList movementStatusComboBox = new SelectList(Enum.GetNames(typeof(MovementStatus)));
+    SelectList projectsComboBox = new SelectList(Model.Projects, "Id", "Name", new { });
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -97,6 +98,16 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(m => m.Movement.ProjectId)
+                                        @Html.DropDownListFor(m => m.Movement.ProjectId, projectsComboBox, "(You can choose one)", new { Class = "selectpicker form-control" })
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">

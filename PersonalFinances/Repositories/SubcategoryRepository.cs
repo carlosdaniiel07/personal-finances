@@ -1,8 +1,9 @@
-﻿using PersonalFinances.Models;
-
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity;
+
+using PersonalFinances.Models;
 
 namespace PersonalFinances.Repositories
 {
@@ -12,13 +13,13 @@ namespace PersonalFinances.Repositories
         /// Get all subcategories
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Subcategory> GetSubcategories ()
+        public async Task<IEnumerable<Subcategory>> GetSubcategories ()
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Subcategories
+                return await context.Subcategories
                     .Include(s => s.Category)
-                .Where(s => s.Enabled).ToList();
+                .Where(s => s.Enabled).ToListAsync();
             }
         }
         
@@ -26,13 +27,13 @@ namespace PersonalFinances.Repositories
         /// Get a collection of Subcategory by name and by category base
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Subcategory> GetSubcategoriesByName (string name, int baseCategoryId)
+        public async Task<IEnumerable<Subcategory>> GetSubcategoriesByName (string name, int baseCategoryId)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Subcategories
+                return await context.Subcategories
                     .Include(s => s.Category)
-                .Where(s => s.Name.Equals(name) && s.Category.Id.Equals(baseCategoryId) && s.Enabled).ToList();
+                .Where(s => s.Name.Equals(name) && s.Category.Id.Equals(baseCategoryId) && s.Enabled).ToListAsync();
             }
         }
 
@@ -41,14 +42,14 @@ namespace PersonalFinances.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Subcategory GetSubcategoryById (int id)
+        public async Task<Subcategory> GetSubcategoryById (int id)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Subcategories
+                return await context.Subcategories
                     .Include(s => s.Category)
                     .Include(s => s.Movements)    
-                .FirstOrDefault(s => s.Id.Equals(id) && s.Enabled);
+                .FirstOrDefaultAsync(s => s.Id.Equals(id) && s.Enabled);
             }
         }
 
@@ -57,11 +58,11 @@ namespace PersonalFinances.Repositories
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public Subcategory GetSubcategoryByName (string name)
+        public async Task<Subcategory> GetSubcategoryByName (string name)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Subcategories.Where(s => s.Name.Equals(name) && s.Enabled).FirstOrDefault();
+                return await context.Subcategories.Where(s => s.Name.Equals(name) && s.Enabled).FirstOrDefaultAsync();
             }
         }
 
@@ -71,13 +72,14 @@ namespace PersonalFinances.Repositories
         /// <param name="name"></param>
         /// <param name="baseCategoryId"></param>
         /// <returns></returns>
-        public Subcategory GetSubcategoryByName (string name, int baseCategoryId)
+        public async Task<Subcategory> GetSubcategoryByName (string name, int baseCategoryId)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Subcategories
+                return await context.Subcategories
                     .Include(s => s.Category)
-                .Where(s => s.Category.Id.Equals(baseCategoryId) && s.Name.Equals(name) && s.Enabled).FirstOrDefault();
+                .Where(s => s.Category.Id.Equals(baseCategoryId) && s.Name.Equals(name) && s.Enabled).
+                FirstOrDefaultAsync();
             }
         }
 
@@ -85,12 +87,12 @@ namespace PersonalFinances.Repositories
         /// A subcategory to be inserted
         /// </summary>
         /// <param name="subcategory"></param>
-        public void Insert (Subcategory subcategory)
+        public async Task Insert (Subcategory subcategory)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
                 context.Subcategories.Add(subcategory);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 
@@ -98,12 +100,12 @@ namespace PersonalFinances.Repositories
         /// Update an existing subcategory
         /// </summary>
         /// <param name="subcategory"></param>
-        public void Update (Subcategory subcategory)
+        public async Task Update (Subcategory subcategory)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
                 context.Entry(subcategory).State = EntityState.Modified;
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
 
@@ -111,14 +113,14 @@ namespace PersonalFinances.Repositories
         /// Update a collection of subcategory
         /// </summary>
         /// <param name="subcategories"></param>
-        public void Update (ICollection<Subcategory> subcategories)
+        public async Task Update (ICollection<Subcategory> subcategories)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
                 foreach (var subcategory in subcategories)
                     context.Entry(subcategory).State = EntityState.Modified;
 
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
     }
