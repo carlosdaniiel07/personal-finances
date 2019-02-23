@@ -72,7 +72,7 @@
                             <div class="form-group">
                                 @Html.LabelFor(p => p.BudgetUsedPercentage)
                                 <div class="progress">
-                                    @{ var projectBudgetUsedPercentage = Model.BudgetUsedPercentage; }
+                                    @{ var projectBudgetUsedPercentage = Math.Round(Model.BudgetUsedPercentage, 2); }
                                     <div class="progress-bar progress-bar-red" role="progressbar" aria-valuenow="@Math.Ceiling(projectBudgetUsedPercentage)" aria-valuemin="0" aria-valuemax="100" style="width: @Math.Ceiling(projectBudgetUsedPercentage)%">
                                         @if (projectBudgetUsedPercentage > 0)
                                         {

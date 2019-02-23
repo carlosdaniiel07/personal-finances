@@ -50,7 +50,7 @@
                                 <td>@project.StartDate.ToShortDateString()</td>
                                 <td>@project.Budget.GetValueOrDefault().ToString("F2")</td>
                                 <td>
-                                    @{ var projectBudgetUsedPercentage = project.BudgetUsedPercentage; }
+                                    @{ var projectBudgetUsedPercentage = Math.Round(project.BudgetUsedPercentage, 2); }
                                     <div class="progress progress-xs" title="@projectBudgetUsedPercentage%">
                                         <div class="progress-bar progress-bar-danger" style="width: @Math.Ceiling(projectBudgetUsedPercentage)%"></div>
                                     </div>
