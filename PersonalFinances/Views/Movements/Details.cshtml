@@ -111,6 +111,16 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                @Html.LabelFor(m => m.Project.Name)
+                                                @Html.TextBoxFor(m => m.Project.Name, new { Class = "form-control", Readonly = "readonly" })
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
@@ -156,6 +166,10 @@
                             <a href="@Url.Action("View", "Accounts", new { Id = Model.Account.Id })" class="list-group-item"><i class="fa fa-external-link"></i> &nbsp; View account</a>
                             <a href="@Url.Action("View", "Categories", new { Id = Model.Category.Id })" class="list-group-item"><i class="fa fa-external-link"></i> &nbsp; View category</a>
                             <a href="@Url.Action("View", "Subcategories", new { Id = Model.Subcategory.Id })" class="list-group-item"><i class="fa fa-external-link"></i> &nbsp; View subcategory</a>
+                            @if (Model.Project != null)
+                            {
+                                <a href="@Url.Action("Details", "Projects", new { Id = Model.Project.Id })" class="list-group-item"><i class="fa fa-external-link"></i> &nbsp; View project</a>
+                            }
                         </div>
                     </div>
                     <!-- /.body -->

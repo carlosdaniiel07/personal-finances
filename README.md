@@ -1,16 +1,27 @@
 Personal Finances
 ============
-![](https://i.imgur.com/pHdPftf.png)
+![](https://i.imgur.com/N98iHKU.png)
 
 ## About
-Personal Finances is a simple personal finances managament system. With it you can manage your finances inserting your expenses and your savings in a custom created account and divide them by category and by subcategory
+Personal Finances is a simple personal finances managament system. With it you can manage your finances inserting your expenses and your savings in a custom created account and divide them by category and by subcategory. If you want, you also can aggregatte your movements by project, where you can define a end date and a budget if necessary. You also are able to get reports where you can filter by account, category, project, accounting date and others.
 
 ## Features
 * Debit and credit movements insertion
 * Transfers between accounts
 * Custom categories and subcategories
+* Custom Projects
 * Custom accounts
 * Analytical view (total credit, balance, balance on month) of accounts and categories
+* Reports
+
+## Changelog
+* 1.0.1 - 02/21/2019
+  * Performance increase
+  * UI adjusts
+  * New features: projects and reports
+ 
+* 1.0.0 - 01/21/2019
+  * First version of project
 
 ## Technologies
 * Front-end

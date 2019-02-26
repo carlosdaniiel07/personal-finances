@@ -8,5 +8,6 @@ namespace PersonalFinances.Models.ViewModels
         public IEnumerable<Account> Accounts { get; set; }
         public IEnumerable<Category> Categories { get; set; }
         public IEnumerable<Subcategory> Subcategories { get; set; }
+        public IEnumerable<Project> Projects { get; set; }
     }
 }

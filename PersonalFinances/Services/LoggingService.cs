@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 using PersonalFinances.Models;
 
@@ -13,7 +14,7 @@ namespace PersonalFinances.Services
         public void Log (Error error)
         {
             var tempPath = Path.GetTempPath();
-            var fileName = $"ErrorLog_{error.When.ToString("ddmmyyyyHHmmss")}";
+            var fileName = $"Personal_Finances_ErrorLog_{error.When.ToString("ddmmyyyyHHmmss")}";
             var filePath = tempPath + Path.DirectorySeparatorChar + fileName + ".txt";
 
             try

@@ -23,14 +23,10 @@ namespace PersonalFinances.Models
         public double InitialBalance { get; set; }
 
         public double Balance { get; set; }
-        public ICollection<Movement> Movements { get; set; }
+        public virtual ICollection<Movement> Movements { get; set; } = new List<Movement>();
         public bool Enabled { get; set; }
 
-        public Account ()
-        {
-            Movements = new List<Movement>();
-        }
-
+        [Display(Name = "Monthly balance")]
         public double MonthlyBalance
         {
             get
@@ -39,6 +35,7 @@ namespace PersonalFinances.Models
             }
         }
 
+        [Display(Name = "Total credit")]
         public double TotalCredit
         {
             get
@@ -47,6 +44,7 @@ namespace PersonalFinances.Models
             }
         }
 
+        [Display(Name = "Total debit")]
         public double TotalDebit
         {
             get

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using PersonalFinances.Models;
 using PersonalFinances.Repositories;
@@ -17,35 +18,24 @@ namespace PersonalFinances.Services
         /// Get all accounts
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Account> GetAll ()
+        public async Task<IEnumerable<Account>> GetAll ()
         {
-            return _repository.GetAccounts();
-        }
-
-        /// <summary>
-        /// Get account's movements
-        /// </summary>
-        /// <param name="accountId"></param>
-        /// <returns></returns>
-        public IEnumerable<Movement> GetMovements (int accountId)
-        {
-            var account = GetById(accountId);
-            return _movementRepository.GetMovementsByAccount(account.Id);
+            return await _repository.GetAccounts();
         }
 
         /// <summary>
         /// Insert a new account
         /// </summary>
         /// <param name="account"></param>
-        public void Add (Account account)
+        public async Task Add (Account account)
         {
             account.Balance = account.InitialBalance;
             account.Enabled = true;
 
-            var nameExists = _repository.GetAccountByName(account.Name) != null;
+            var nameExists = await _repository.GetAccountByName(account.Name) != null;
 
             if (!nameExists)
-                _repository.Insert(account);
+                await _repository.Insert(account);
             else
                 throw new AlreadyExistsException($"Already exists an account with the name {account.Name}");
         }
@@ -55,12 +45,12 @@ namespace PersonalFinances.Services
         /// </summary>
         /// <param name="accountId"></param>
         /// <param name="ammount"></param>
-        public void AdjustBalance (int accountId, string movementType, double ammount)
+        public async Task AdjustBalance (int accountId, string movementType, double ammount)
         {
             if (movementType.Equals("C"))
-                IncreaseBalance(accountId, ammount);
+                await IncreaseBalance(accountId, ammount);
             else
-                DecreaseBalance(accountId, ammount);
+                await DecreaseBalance(accountId, ammount);
         }
 
         /// <summary>
@@ -68,12 +58,12 @@ namespace PersonalFinances.Services
         /// </summary>
         /// <param name="accountId"></param>
         /// <param name="ammount"></param>
-        private void IncreaseBalance (int accountId, double ammount)
+        private async Task IncreaseBalance (int accountId, double ammount)
         {
-            var account = GetById(accountId);
+            var account = await GetById(accountId);
             account.Balance += ammount;
 
-            _repository.Update(account);
+            await _repository.Update(account);
         }
 
         /// <summary>
@@ -81,28 +71,28 @@ namespace PersonalFinances.Services
         /// </summary>
         /// <param name="accountId"></param>
         /// <param name="ammount"></param>
-        private void DecreaseBalance (int accountId, double ammount)
+        private async Task DecreaseBalance (int accountId, double ammount)
         {
-            var account = GetById(accountId);
+            var account = await GetById(accountId);
             account.Balance -= ammount;
 
-            _repository.Update(account);
+            await _repository.Update(account);
         }
 
         /// <summary>
         /// Update an existing accout
         /// </summary>
         /// <param name="account"></param>
-        public void Update (Account account)
+        public async Task Update (Account account)
         {
-            var currentAccount = GetById(account.Id);
-            var quantity = _repository.GetAccountsByName(account.Name).Count(a => !a.Id.Equals(currentAccount.Id));
+            var currentAccount = await GetById(account.Id);
+            var quantity = (await _repository.GetAccountsByName(account.Name)).Count(a => !a.Id.Equals(currentAccount.Id));
 
             account.Enabled = true;
             account.Balance = currentAccount.Balance;
 
             if (quantity.Equals(0))
-                _repository.Update(account);
+                await _repository.Update(account);
             else
                 throw new AlreadyExistsException($"Already exists an account with the name {account.Name}");
         }
@@ -111,12 +101,12 @@ namespace PersonalFinances.Services
         /// Remove an account
         /// </summary>
         /// <param name="account"></param>
-        public void Remove (int id)
+        public async Task Remove (int id)
         {
-            var account = GetById(id);
+            var account = await GetById(id);
             account.Enabled = false;
 
-            _repository.Update(account);
+            await _repository.Update(account);
         }
 
         /// <summary>
@@ -124,9 +114,9 @@ namespace PersonalFinances.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Account GetById (int id)
+        public async Task<Account> GetById (int id)
         {
-            var account = _repository.GetAccountById(id);
+            var account = await _repository.GetAccountById(id);
 
             if (account != null)
                 return account;
@@ -139,9 +129,9 @@ namespace PersonalFinances.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public string GetAccountNameById (int id)
+        public async Task<string> GetAccountNameById (int id)
         {
-            var name = _repository.GetAccountNameById(id);
+            var name = await _repository.GetAccountNameById(id);
 
             if (name != null)
                 return name;

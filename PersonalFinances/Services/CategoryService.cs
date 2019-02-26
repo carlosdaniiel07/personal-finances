@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using PersonalFinances.Models;
@@ -16,23 +17,23 @@ namespace PersonalFinances.Services
         /// Get all categories
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Category> GetAll ()
+        public async Task<IEnumerable<Category>> GetAll ()
         {
-            return _repository.GetCategories();
+            return await _repository.GetCategories();
         }
 
         /// <summary>
         /// Insert a category
         /// </summary>
         /// <param name="category"></param>
-        public void Add (Category category)
+        public async Task Add (Category category)
         {
             category.Enabled = true;
 
-            var nameExists = _repository.GetCategoryByName(category.Name, category.Type) != null;
+            var nameExists = await _repository.GetCategoryByName(category.Name, category.Type) != null;
 
             if (!nameExists)
-                _repository.Insert(category);
+                await _repository.Insert(category);
             else
                 throw new AlreadyExistsException($"Already exists a category with name {category.Name}");
         }
@@ -41,15 +42,15 @@ namespace PersonalFinances.Services
         /// Update a existing category
         /// </summary>
         /// <param name="category"></param>
-        public void Update (Category category)
+        public async Task Update (Category category)
         {
             var currentCategory = GetById(category.Id);
-            var quantity = _repository.GetCategoriesByName(category.Name).Count(c => !c.Id.Equals(currentCategory.Id));
+            var quantity = (await _repository.GetCategoriesByName(category.Name)).Count(c => !c.Id.Equals(currentCategory.Id));
 
             category.Enabled = true;
 
             if (quantity.Equals(0))
-                _repository.Update(category);
+                await _repository.Update(category);
             else
                 throw new AlreadyExistsException($"Already exists a {category.Type} category with name {category.Name}");
         }
@@ -58,13 +59,13 @@ namespace PersonalFinances.Services
         /// Remove a category
         /// </summary>
         /// <param name="id"></param>
-        public void Remove (int id)
+        public async Task Remove (int id)
         {
-            var category = GetById(id);
+            var category = await GetById(id);
             category.Enabled = false;
 
-            _repository.Update(category);
-            _subcategoryService.Delete(category.Subcategories);
+            await _repository.Update(category);
+            await _subcategoryService.Delete(category.Subcategories);
         }
 
         /// <summary>
@@ -72,9 +73,9 @@ namespace PersonalFinances.Services
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Category GetById (int id)
+        public async Task<Category> GetById (int id)
         {
-            var category = _repository.GetCategoryById(id);
+            var category = await _repository.GetCategoryById(id);
 
             if (category != null)
                 return category;
@@ -88,9 +89,9 @@ namespace PersonalFinances.Services
         /// <param name="name"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public Category GetByName (string name, string type)
+        public async Task<Category> GetByName (string name, string type)
         {
-            var category = _repository.GetCategoryByName(name, type);
+            var category = await _repository.GetCategoryByName(name, type);
 
             if (category != null)
                 return category;

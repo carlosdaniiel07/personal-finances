@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 using PersonalFinances.Models;
 using PersonalFinances.Models.Enums;
+using PersonalFinances.Models.ViewModels;
 using PersonalFinances.Repositories;
 using PersonalFinances.Services.Exceptions;
 
@@ -17,25 +19,25 @@ namespace PersonalFinances.Services
         /// Add a new movement
         /// </summary>
         /// <param name="movement"></param>
-        public void Add (Movement movement)
+        public async Task Add (Movement movement)
         {
             movement.Increase = movement.Increase ?? 0;
             movement.Decrease = movement.Decrease ?? 0;
             movement.InclusionDate = DateTime.Now;
 
-            _repository.Insert(movement);
+            await _repository.Insert(movement);
 
             if (movement.MovementStatus.Equals(MovementStatus.Launched))
-                _accountService.AdjustBalance(movement.AccountId, movement.Type, movement.TotalValue);
+                await _accountService.AdjustBalance(movement.AccountId, movement.Type, movement.TotalValue);
         }
 
         /// <summary>
         /// Update an existing movement
         /// </summary>
         /// <param name="movement"></param>
-        public void Update(Movement movement)
+        public async Task Update(Movement movement)
         {
-            var oldMovement = GetById(movement.Id);
+            var oldMovement = await GetById(movement.Id);
 
             movement.Increase = movement.Increase ?? 0;
             movement.Decrease = movement.Decrease ?? 0;
@@ -47,7 +49,7 @@ namespace PersonalFinances.Services
                 {
                     if (oldMovement.MovementStatus.Equals(MovementStatus.Pending))
                     {
-                        _accountService.AdjustBalance(movement.AccountId, movement.Type, movement.TotalValue);
+                        await _accountService.AdjustBalance(movement.AccountId, movement.Type, movement.TotalValue);
                     }
                     else
                     {
@@ -58,70 +60,79 @@ namespace PersonalFinances.Services
                         else
                             operation = (movement.TotalValue > oldMovement.TotalValue) ? "D" : "C";
 
-                        _accountService.AdjustBalance(movement.AccountId, operation, dif);
+                        await _accountService.AdjustBalance(movement.AccountId, operation, dif);
                     }
                 }
                 else
                 {
                     if (oldMovement.MovementStatus.Equals(MovementStatus.Launched))
-                    {
-                        var operation = (movement.Type.Equals("C")) ? "D" : "C";
-                        _accountService.AdjustBalance(oldMovement.Account.Id, operation, oldMovement.TotalValue);
-                    }
+                        await _accountService.AdjustBalance(oldMovement.Account.Id, GetInverseOperation(movement.Type), oldMovement.TotalValue);
 
-                    _accountService.AdjustBalance(movement.AccountId, movement.Type, movement.TotalValue);
+                    await _accountService.AdjustBalance(movement.AccountId, movement.Type, movement.TotalValue);
                 }
             }
             else
             {
                 if(oldMovement.MovementStatus.Equals(MovementStatus.Launched))
-                {
-                    var operation = (oldMovement.Type.Equals("C")) ? "D" : "C";
-                    _accountService.AdjustBalance(oldMovement.AccountId, operation, oldMovement.TotalValue);
-                }
+                    await _accountService.AdjustBalance(oldMovement.AccountId, GetInverseOperation(oldMovement.Type), oldMovement.TotalValue);
             }
             
-            _repository.Update(movement);
+            await _repository.Update(movement);
         }
 
         /// <summary>
         /// Delete a movement by Id
         /// </summary>
         /// <param name="id"></param>
-        public void Delete (int id)
+        public async Task Delete (int id)
         {
-            var movement = GetById(id);
+            var movement = await GetById(id);
 
             if (movement.MovementStatus.Equals(MovementStatus.Launched))
-            {
-                string operation = (movement.Type.Equals("C")) ? "D" : "C";
-                _accountService.AdjustBalance(movement.Account.Id, operation, movement.TotalValue);
-            }
+                await _accountService.AdjustBalance(movement.Account.Id, GetInverseOperation(movement.Type), movement.TotalValue);
 
-            _repository.Remove(movement);
+            await _repository.Remove(movement);
         }
 
         /// <summary>
         /// Get all movements
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Movement> GetAll ()
+        public async Task<IEnumerable<Movement>> GetAll ()
         {
-            return _repository.GetAllMovements();
+            return await _repository.GetAllMovements();
+        }
+
+        /// <summary>
+        /// Get all movements (filter by account and accounting date range)
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<Movement>> GetAll (BankStatementViewModel bankStatement)
+        {
+            return await _repository.GetAllMovements(bankStatement);
         }
 
         /// <summary>
         /// Get a movement by Id
         /// </summary>
         /// <returns></returns>
-        public Movement GetById (int id)
+        public async Task<Movement> GetById (int id)
         {
-            var movement = _repository.GetMovementById(id);
+            var movement = await _repository.GetMovementById(id);
 
             if (movement != null)
                 return movement;
             else
                 throw new NotFoundException("This movement not exists");
+        }
+
+        /// <summary>
+        /// Get inverse operation (credit or debit) based in a movement type
+        /// </summary>
+        /// <returns></returns>
+        private string GetInverseOperation (string movementType)
+        {
+            return (movementType.Equals("C")) ? "D" : "C";
         }
     }
 }

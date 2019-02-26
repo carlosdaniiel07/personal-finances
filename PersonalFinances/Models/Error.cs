@@ -11,7 +11,6 @@ namespace PersonalFinances.Models
         public DateTime When { get; private set; }
         public Exception Exception { get; private set; }
 
-
         public Error (string browser, string url, string method, string userAddress, Exception exception)
         {
             Browser = browser;

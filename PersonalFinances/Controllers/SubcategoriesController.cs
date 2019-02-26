@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Web.Mvc;
+using System.Threading.Tasks;
 using System.Data.Entity.Infrastructure;
 
 using PersonalFinances.Models;
@@ -15,17 +16,17 @@ namespace PersonalFinances.Controllers
         private CategoryService _categoryService = new CategoryService();
 
         // GET: Subcategories
-        public ActionResult Index ()
+        public async Task<ActionResult> Index ()
         {
-            return View(_service.GetAll());
+            return View(await _service.GetAll());
         }
 
         // GET: Subcategories/View
-        public ActionResult View (int? Id)
+        public async Task<ActionResult> View (int? Id)
         {
             try
             {
-                return View(_service.GetById(Id.GetValueOrDefault()));
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
@@ -35,17 +36,11 @@ namespace PersonalFinances.Controllers
         }
 
         // GET: Subcategories/Edit
-        public ActionResult Edit (int? Id)
+        public async Task<ActionResult> Edit (int? Id)
         {
             try
             {
-                var viewModel = new SubcategoryViewModel
-                {
-                    Subcategory = _service.GetById(Id.GetValueOrDefault()),
-                    Categories = _categoryService.GetAll()
-                };
-
-                return View(viewModel);
+                return View(await GetViewModel(await _service.GetById(Id.GetValueOrDefault())));
             }
             catch (NotFoundException e)
             {
@@ -56,26 +51,19 @@ namespace PersonalFinances.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit (int Id, Subcategory subcategory)
+        public async Task<ActionResult> Edit (int Id, Subcategory subcategory)
         {
             if (ModelState.IsValid && Id.Equals(subcategory.Id))
             {
                 try
                 {
-                    _service.Update(subcategory);
+                    await _service.Update(subcategory);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ModelValidationException e)
                 {
                     ModelState.AddModelError("SubcategoryValidation", e.Message);
-
-                    var viewModel = new SubcategoryViewModel
-                    {
-                        Subcategory = subcategory,
-                        Categories = _categoryService.GetAll()
-                    };
-
-                    return View(viewModel);
+                    return View(await GetViewModel(subcategory));
                 }
                 catch (NotFoundException e)
                 {
@@ -90,22 +78,16 @@ namespace PersonalFinances.Controllers
             }
             else
             {
-                var viewModel = new SubcategoryViewModel
-                {
-                    Subcategory = subcategory,
-                    Categories = _categoryService.GetAll()
-                };
-
-                return View(viewModel);
+                return View(await GetViewModel(subcategory));
             }
         }
 
         // GET: Subcategories/Delete
-        public ActionResult Delete (int? Id)
+        public async Task<ActionResult> Delete (int? Id)
         {
             try
             {
-                return View(_service.GetById(Id.GetValueOrDefault()));
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
@@ -116,11 +98,11 @@ namespace PersonalFinances.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete (int Id)
+        public async Task<ActionResult> Delete (int Id)
         {
             try
             {
-                _service.Delete(Id);
+                await _service.Delete(Id);
                 return RedirectToAction(nameof(Index));
             }
             catch (NotFoundException e)
@@ -136,34 +118,26 @@ namespace PersonalFinances.Controllers
         }
 
         // GET: Subcategories/New
-        public ActionResult New ()
-        {
-            var viewModel = new SubcategoryViewModel { Categories = _categoryService.GetAll() }; 
-            return View(viewModel);
+        public async Task<ActionResult> New ()
+        { 
+            return View(await GetViewModel(null));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult New (Subcategory subcategory)
+        public async Task<ActionResult> New (Subcategory subcategory)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _service.Add(subcategory);
+                    await _service.Add(subcategory);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ModelValidationException e)
                 {
                     ModelState.AddModelError("SubcategoryValidation", e.Message);
-
-                    var viewModel = new SubcategoryViewModel
-                    {
-                        Subcategory = subcategory,
-                        Categories = _categoryService.GetAll()
-                    };
-
-                    return View(viewModel);
+                    return View(await GetViewModel(subcategory));
                 }
                 catch (DbUpdateException e)
                 {
@@ -173,14 +147,17 @@ namespace PersonalFinances.Controllers
             }
             else
             {
-                var viewModel = new SubcategoryViewModel
-                {
-                    Subcategory = subcategory,
-                    Categories = _categoryService.GetAll()
-                };
-
-                return View(viewModel);
+                return View(await GetViewModel(subcategory));
             }
+        }
+
+        private async Task<SubcategoryViewModel> GetViewModel (Subcategory subcategory)
+        {
+            return new SubcategoryViewModel
+            {
+                Subcategory = subcategory,
+                Categories = await _categoryService.GetAll()
+            };
         }
     }
 }

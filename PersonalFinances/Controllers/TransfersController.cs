@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Web.Mvc;
+using System.Threading.Tasks;
 using System.Data.Entity.Infrastructure;
 
 using PersonalFinances.Models;
@@ -15,40 +16,32 @@ namespace PersonalFinances.Controllers
         private AccountService _accountService = new AccountService();
 
         // GET: Transfers
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View(_service.GetAll());
+            return View(await _service.GetAll());
         }
 
         // GET: Transfers/New
-        public ActionResult New ()
+        public async Task<ActionResult> New ()
         {
-            var viewModel = new TransferViewModel { Accounts = _accountService.GetAll() };
-            return View(viewModel);
+            return View(await GetViewModel(null));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult New (Transfer transfer)
+        public async Task<ActionResult> New (Transfer transfer)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _service.Add(transfer);
+                    await _service.Add(transfer);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ModelValidationException e)
                 {
                     ModelState.AddModelError("TransferValidation", e.Message);
-
-                    var viewModel = new TransferViewModel
-                    {
-                        Transfer = transfer,
-                        Accounts = _accountService.GetAll()
-                    };
-
-                    return View(viewModel);
+                    return View(await GetViewModel(transfer));
                 }
                 catch (DbUpdateException e)
                 {
@@ -58,21 +51,16 @@ namespace PersonalFinances.Controllers
             }
             else
             {
-                var viewModel = new TransferViewModel
-                {
-                    Transfer = transfer,
-                    Accounts = _accountService.GetAll()
-                };
-                return View(viewModel);
+                return View(await GetViewModel(transfer));
             }
         }
 
         // GET: Transfers/Details
-        public ActionResult Details (int? Id)
+        public async Task<ActionResult> Details (int? Id)
         {
             try
             {
-                return View(_service.GetById(Id.GetValueOrDefault()));
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
@@ -82,11 +70,11 @@ namespace PersonalFinances.Controllers
         }
 
         // GET: Transfers/Cancel
-        public ActionResult Cancel (int? Id)
+        public async Task<ActionResult> Cancel (int? Id)
         {
             try
             {
-                return View(_service.GetById(Id.GetValueOrDefault()));
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
@@ -97,11 +85,11 @@ namespace PersonalFinances.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Cancel (int Id)
+        public async Task<ActionResult> Cancel (int Id)
         {
             try
             {
-                _service.Cancel(Id);
+                await _service.Cancel(Id);
                 return RedirectToAction(nameof(Index));
             }
             catch (NotFoundException e)
@@ -117,11 +105,11 @@ namespace PersonalFinances.Controllers
         }
 
         // GET: Transfers/Launch
-        public ActionResult Launch (int? Id)
+        public async Task<ActionResult> Launch (int? Id)
         {
             try
             {
-                return View(_service.GetById(Id.GetValueOrDefault()));
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
@@ -132,11 +120,11 @@ namespace PersonalFinances.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Launch (int Id)
+        public async Task<ActionResult> Launch (int Id)
         {
             try
             {
-                _service.Launch(Id);
+                await _service.Launch(Id);
                 return RedirectToAction(nameof(Index));
             }
             catch (NotFoundException e)
@@ -149,6 +137,15 @@ namespace PersonalFinances.Controllers
                 TempData["ErrorMessage"] = e.Message;
                 return new HttpStatusCodeResult(HttpStatusCode.InternalServerError, e.Message);
             }
+        }
+
+        private async Task<TransferViewModel> GetViewModel (Transfer transfer)
+        {
+            return new TransferViewModel
+            {
+                Transfer = transfer,
+                Accounts = await _accountService.GetAll()
+            };
         }
     }
 }

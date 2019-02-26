@@ -1,0 +1,195 @@
+﻿@model PersonalFinances.Models.Project
+
+@{
+    ViewBag.Title = "Project details";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @ViewBag.Title
+            <small>Manage your project</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("Index", "Projects")">Projects</a></li>
+            <li class="active">@ViewBag.Title</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <!-- box -->
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form role="form">
+                            <div class="row">
+                                <div class="col-xs-2">
+                                    <div class="form-group">
+                                        @Html.LabelFor(p => p.Id)
+                                        @Html.TextBoxFor(p => p.Id, new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.Name)
+                                @Html.TextBoxFor(p => p.Name, new { Class = "form-control", Readonly = "readonly" })
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(p => p.StartDate)
+                                        @Html.TextBox("StartDate", Model.StartDate.ToShortDateString(), new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(p => p.FinishDate)
+                                        @Html.TextBox("FinishDate", Model.FinishDate.GetValueOrDefault().ToShortDateStringDefaultIfNull(), new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(p => p.Budget)
+                                        @Html.TextBoxFor(p => p.Budget, new { Class = "form-control", Readonly = "readonly", Value = Model.Budget.GetValueOrDefault().ToString("F2") })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(p => p.LeftBudget)
+                                        @Html.TextBoxFor(p => Model.LeftBudget, new { Class = "form-control", Readonly = "readonly", Value = Model.LeftBudget.ToString("F2") })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.BudgetUsedPercentage)
+                                <div class="progress">
+                                    @{ var projectBudgetUsedPercentage = Math.Round(Model.BudgetUsedPercentage, 2); }
+                                    <div class="progress-bar progress-bar-red" role="progressbar" aria-valuenow="@Math.Ceiling(projectBudgetUsedPercentage)" aria-valuemin="0" aria-valuemax="100" style="width: @Math.Ceiling(projectBudgetUsedPercentage)%">
+                                        @if (projectBudgetUsedPercentage > 0)
+                                        {
+                                            <span class="badge bg-red">@projectBudgetUsedPercentage%</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(p => p.TotalCredit)
+                                        @Html.TextBoxFor(p => p.TotalCredit, new { Class = "form-control", Readonly = "readonly", Value = Model.TotalCredit.ToString("F2") })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(p => p.TotalDebit)
+                                        @Html.TextBoxFor(p => p.TotalDebit, new { Class = "form-control", Readonly = "readonly", Value = Model.TotalDebit.ToString("F2") })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(p => p.ProjectBalance)
+                                        @Html.TextBoxFor(p => p.ProjectBalance, new { Class = "form-control", Readonly = "readonly", Value = Model.ProjectBalance.ToString("F2") })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(p => p.ProjectStatus)
+                                        @Html.TextBoxFor(p => p.ProjectStatus, new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(p => p.Description)
+                                @Html.TextAreaFor(p => p.Description, new { Class = "form-control", Readonly = "readonly" })
+                            </div>
+
+                            <br />
+
+                            <a href="@Url.Action("Edit", "Projects", new { Id = Model.Id})" class="btn btn-sm btn-warning btn-flat pull-left"><i class="fa fa-pencil-square-o"></i> Edit project</a>
+                            <a href="@Url.Action("Delete", "Projects", new { Id = Model.Id})" class="btn btn-sm btn-danger btn-flat pull-left"><i class="fa fa-trash-o"></i> Delete project</a>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+        <!-- table-box -->
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Project movements</h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table class="table table-bordered table-striped datatable" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th>AccountingDate</th>
+                            <th>Total value</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var movement in Model.Movements)
+                        {
+                            <tr>
+                                <td>@movement.Description</td>
+                                @if (movement.Type.Equals("C"))
+                                {
+                                    <td><span class="label label-success">Credit</span></td>
+                                }
+                                else
+                                {
+                                    <td><span class="label label-danger">Debit</span></td>
+                                }
+                                <td>@movement.AccountingDate.ToShortDateString()</td>
+                                <td>@movement.TotalValue.ToString("F2")</td>
+                                <td>@movement.Category.Name</td>
+                                @if (movement.MovementStatus.Equals(MovementStatus.Launched))
+                                {
+                                    <td class="text-green"><i class="fa fa-check"></i> @movement.MovementStatus</td>
+                                }
+                                else
+                                {
+                                    <td class="text-yellow"><i class="fa fa-exclamation-triangle"></i> @movement.MovementStatus</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.body -->
+            <div class="box-footer clearfix">
+                <a href="@Url.Action("New", "Movements")" class="btn btn-sm btn-info btn-flat pull-left"><i class="fa fa-plus"></i> New movement</a>
+            </div>
+            <!-- /.box-footer -->
+        </div>
+        <!-- ./table-box -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

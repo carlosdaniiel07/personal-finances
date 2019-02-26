@@ -1,9 +1,9 @@
 ﻿using System.Net;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Data.Entity.Infrastructure;
 
 using PersonalFinances.Models;
-using PersonalFinances.Models.ViewModels;
 using PersonalFinances.Services;
 using PersonalFinances.Services.Exceptions;
 
@@ -14,22 +14,17 @@ namespace PersonalFinances.Controllers
         private AccountService _service = new AccountService();
 
         // GET: Accounts
-        public ActionResult Index ()
+        public async Task<ActionResult> Index ()
         {
-            return View(_service.GetAll());
+            return View(await _service.GetAll());
         }
 
         // GET: Accounts/View
-        public ActionResult View (int? Id)
+        public async Task<ActionResult> View (int? Id)
         {
             try
             {
-                var viewModel = new ViewAccountViewModel
-                {
-                    Account = _service.GetById(Id.GetValueOrDefault()),
-                    AccountMovements = _service.GetMovements(Id.GetValueOrDefault())
-                };
-                return View(viewModel);
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
@@ -39,11 +34,11 @@ namespace PersonalFinances.Controllers
         }
 
         // GET: Accounts/Delete
-        public ActionResult Delete (int? Id)
+        public async Task<ActionResult> Delete (int? Id)
         {
             try
             {
-                return View(_service.GetById(Id.GetValueOrDefault()));
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
@@ -54,11 +49,11 @@ namespace PersonalFinances.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete (int Id)
+        public async Task<ActionResult> Delete (int Id)
         {
             try
             {
-                _service.Remove(Id);
+                await _service.Remove(Id);
                 return RedirectToAction(nameof(Index));
             }
             catch (NotFoundException e)
@@ -81,13 +76,13 @@ namespace PersonalFinances.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult New (Account account)
+        public async Task<ActionResult> New (Account account)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _service.Add(account);
+                    await _service.Add(account);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ModelValidationException e)
@@ -108,11 +103,11 @@ namespace PersonalFinances.Controllers
         }
 
         // GET: Accounts/Edit
-        public ActionResult Edit (int? Id)
+        public async Task<ActionResult> Edit (int? Id)
         {
             try
             {
-                return View(_service.GetById(Id.GetValueOrDefault()));
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
@@ -123,13 +118,13 @@ namespace PersonalFinances.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit (int Id, Account account)
+        public async Task<ActionResult> Edit (int Id, Account account)
         {
             if (ModelState.IsValid && Id.Equals(account.Id))
             {
                 try
                 {
-                    _service.Update(account);
+                    await _service.Update(account);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ModelValidationException e)

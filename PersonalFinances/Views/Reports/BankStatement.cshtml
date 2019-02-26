@@ -1,0 +1,180 @@
+﻿@model PersonalFinances.Models.ViewModels.BankStatementViewModel
+
+@{
+    ViewBag.Title = "Bank statement";
+
+    SelectList accountsComboBox = new SelectList(Model.Accounts, "Id", "Name", "AccountType", new { });
+    SelectList categoriesComboBox = new SelectList(Model.Categories, "Id", "Name", "Type", new { });
+    SelectList subcategoriesComboBox = new SelectList(Model.Subcategories, "Id", "Name", "Category.Name", new { });
+    SelectList projectsComboBox = new SelectList(Model.Projects, "Id", "Name", "ProjectStatus", new { });
+    SelectList movementStatusComboBox = new SelectList(Enum.GetNames(typeof(MovementStatus)));
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @ViewBag.Title
+            <small></small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href="@Url.Action("Index", "Dashboard")"><i class="fa fa-dashboard"></i> Home</a></li>
+            <li class="active">@ViewBag.Title</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- parameters-box -->
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Parameters</h3>
+
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <form role="search" action="@Url.Action("BankStatement", "Reports")" method="post">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(b => b.Account)
+                                        @Html.DropDownListFor(b => b.Account, accountsComboBox, new { Class = "form-control selectpicker" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(b => b.Category)
+                                        @Html.DropDownListFor(b => b.Category, categoriesComboBox, "(Optional)", new { Class = "form-control selectpicker" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(b => b.Subcategory)
+                                        @Html.DropDownListFor(b => b.Subcategory, subcategoriesComboBox, "(Optional)", new { Class = "form-control selectpicker" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(b => b.Project)
+                                        @Html.DropDownListFor(b => b.Project, projectsComboBox, "(Optional)", new { Class = "form-control selectpicker" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        @Html.LabelFor(b => b.StartDate)
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            @Html.TextBoxFor(b => b.StartDate, new { Class = "form-control pull-right datepicker" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        @Html.LabelFor(b => b.EndDate)
+                                        <div class="input-group date">
+                                            <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            @Html.TextBoxFor(b => b.EndDate, new { Class = "form-control pull-right datepicker" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        @Html.LabelFor(b => b.MovementStatus)
+                                        @Html.DropDownListFor(b => b.MovementStatus, movementStatusComboBox, "(All)", new { Class = "form-control selectpicker" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-sm btn-primary btn-flat pull-left"><i class="fa fa-search"></i> Search</button>
+                        </form>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.parameters-box -->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <!-- movements-box -->
+                <div class="box box-primary">
+                    <div class="box-body">
+                        <table class="table table-hover datatable-export">
+                            <thead>
+                                <tr>
+                                    <th>Accounting</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Inclusion date</th>
+                                    <th>Value</th>
+                                    <th>Increase</th>
+                                    <th>Decrease</th>
+                                    <th>Account</th>
+                                    <th>Category</th>
+                                    <th>Subcategory</th>
+                                    <th>Project</th>
+                                    <th>Status</th>
+                                    <th>Observation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var movement in Model.Movements)
+                                {
+                                    <tr>
+                                        <td>@movement.AccountingDate.ToShortDateString()</td>
+                                        @if (movement.Type.Equals("C"))
+                                        {
+                                            <td><span class="label label-success">Credit</span></td>
+                                        }
+                                        else
+                                        {
+                                            <td><span class="label label-danger">Debit</span></td>
+                                        }
+                                        <td>@movement.Description</td>
+                                        <td>@movement.InclusionDate.ToShortDateString()</td>
+                                        <td>@movement.Value.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</td>
+                                        <td>@movement.Increase.GetValueOrDefault().ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</td>
+                                        <td>@movement.Decrease.GetValueOrDefault().ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</td>
+                                        <td>@movement.Account.Name</td>
+                                        <td>@movement.Category.Name</td>
+                                        <td>@movement.Subcategory.Name</td>
+                                        @{ 
+                                            var projectName = (movement.Project != null) ? movement.Project.Name : null;
+                                        }
+                                        <td><span class="label label-info"></span>@projectName</td>
+                                        @if (movement.MovementStatus.Equals(MovementStatus.Launched))
+                                        {
+                                            <td class="text-green"><i class="fa fa-check"></i> @movement.MovementStatus</td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-yellow"><i class="fa fa-exclamation-triangle"></i> @movement.MovementStatus</td>
+                                        }
+                                        <td>@movement.Observation</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+                </div>
+                <!-- /.movements-box -->
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

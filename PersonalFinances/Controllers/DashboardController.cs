@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 using PersonalFinances.Services;
@@ -11,9 +12,9 @@ namespace PersonalFinances.Controllers
         private AccountService _accountService = new AccountService();
 
         // GET: Dashboard
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var accounts = _accountService.GetAll();
+            var accounts = await _accountService.GetAll();
 
             var viewModel = new DashboardViewModel
             {

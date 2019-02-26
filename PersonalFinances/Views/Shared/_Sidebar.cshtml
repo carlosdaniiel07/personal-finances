@@ -16,6 +16,20 @@
             <li>
                 <a href="@Url.Action("Index", "Transfers")"><i class="fa fa-exchange"></i> <span>Transfers</span></a>
             </li>
+            <li>
+                <a href="@Url.Action("Index", "Projects")"><i class="fa fa-thumb-tack"></i> <span>Projects</span></a>
+            </li>
+            <li class="treeview">
+                <a href="#">
+                    <i class="fa fa-file-excel-o"></i> <span>Reports</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="@Url.Action("BankStatement", "Reports")"><i class="fa fa-circle-o"></i> Bank statement</a></li>
+                </ul>
+            </li>
             <li class="treeview">
                 <a href="#">
                     <i class="fa fa-cogs"></i> <span>Manage</span>

@@ -24,8 +24,10 @@ namespace PersonalFinances.Models
 
         public double? Decrease { get; set; }
 
+        [Display(Name = "Inclusion date")]
         public DateTime InclusionDate { get; set; }
 
+        [Display(Name = "Accounting date")]
         public DateTime AccountingDate { get; set; }
 
         public Account Account { get; set; }
@@ -46,12 +48,19 @@ namespace PersonalFinances.Models
         [Display(Name = "Subcategory")]
         public int SubcategoryId { get; set; }
 
+        public Project Project { get; set; }
+
+        [Display(Name = "Project")]
+        public int? ProjectId { get; set; }
+
         [Required]
+        [Display(Name = "Status")]
         public MovementStatus MovementStatus { get; set; }
 
         [StringLength(100)]
         public string Observation { get; set; }
 
+        [Display(Name = "Total value")]
         public double TotalValue
         {
             get

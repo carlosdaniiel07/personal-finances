@@ -19,11 +19,6 @@ namespace PersonalFinances.Models
 
         public bool Enabled { get; set; }
 
-        public ICollection<Movement> Movements { get; set; }
-
-        public Subcategory ()
-        {
-            Movements = new List<Movement>();
-        }
+        public virtual ICollection<Movement> Movements { get; set; } = new List<Movement>();
     }
 }

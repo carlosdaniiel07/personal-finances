@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Web.Mvc;
 using System.Data.Entity.Infrastructure;
+using System.Threading.Tasks;
 
 using PersonalFinances.Services;
 using PersonalFinances.Services.Exceptions;
@@ -15,49 +16,35 @@ namespace PersonalFinances.Controllers
         private AccountService _accountService = new AccountService();
         private CategoryService _categoryService = new CategoryService();
         private SubcategoryService _subcategoryService = new SubcategoryService();
+        private ProjectService _projectService = new ProjectService();
 
         // GET: Movements
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View(_service.GetAll());
+            return View(await _service.GetAll());
         }
 
         // GET: Movements/New
-        public ActionResult New ()
+        public async Task<ActionResult> New ()
         {
-            var viewModel = new MovementViewModel
-            {
-                Accounts = _accountService.GetAll(),
-                Categories = _categoryService.GetAll(),
-                Subcategories = _subcategoryService.GetAll()
-            };
-            return View(viewModel);
+            return View(await GetViewModel(null));
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult New (Movement movement)
+        public async Task<ActionResult> New (Movement movement)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _service.Add(movement);
+                    await _service.Add(movement);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ModelValidationException e)
                 {
                     ModelState.AddModelError("MovementValidation", e.Message);
-
-                    var viewModel = new MovementViewModel
-                    {
-                        Movement = movement,
-                        Accounts = _accountService.GetAll(),
-                        Categories = _categoryService.GetAll(),
-                        Subcategories = _subcategoryService.GetAll()
-                    };
-
-                    return View(viewModel);
+                    return View(await GetViewModel(movement));
                 }
                 catch (DbUpdateException e)
                 {
@@ -67,23 +54,16 @@ namespace PersonalFinances.Controllers
             }
             else
             {
-                var viewModel = new MovementViewModel
-                {
-                    Movement = movement,
-                    Accounts = _accountService.GetAll(),
-                    Categories = _categoryService.GetAll(),
-                    Subcategories = _subcategoryService.GetAll()
-                };
-                return View(viewModel);
+                return View(GetViewModel(movement));
             }
         }
 
         // GET: Movements/Delete
-        public ActionResult Delete (int? Id)
+        public async Task<ActionResult> Delete (int? Id)
         {
             try
             {
-                return View(_service.GetById(Id.GetValueOrDefault()));
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
@@ -94,11 +74,11 @@ namespace PersonalFinances.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete (int id)
+        public async Task<ActionResult> Delete (int id)
         {
             try
             {
-                _service.Delete(id);
+                await _service.Delete(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (NotFoundException e)
@@ -114,18 +94,11 @@ namespace PersonalFinances.Controllers
         }
 
         // GET: Movements/Edit
-        public ActionResult Edit (int? Id)
+        public async Task<ActionResult> Edit (int? Id)
         {
             try
             {
-                var viewModel = new MovementViewModel
-                {
-                    Movement = _service.GetById(Id.GetValueOrDefault()),
-                    Accounts = _accountService.GetAll(),
-                    Categories = _categoryService.GetAll(),
-                    Subcategories = _subcategoryService.GetAll()
-                };
-                return View(viewModel);
+                return View(await GetViewModel(await _service.GetById(Id.GetValueOrDefault())));
             }
             catch (NotFoundException e)
             {
@@ -136,28 +109,19 @@ namespace PersonalFinances.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit (int Id, Movement movement)
+        public async Task<ActionResult> Edit (int Id, Movement movement)
         {
             if(ModelState.IsValid && Id.Equals(movement.Id))
             {
                 try
                 {
-                    _service.Update(movement);
+                    await _service.Update(movement);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (ModelValidationException e)
                 {
                     ModelState.AddModelError("MovementValidation", e.Message);
-
-                    var viewModel = new MovementViewModel
-                    {
-                        Movement = movement,
-                        Accounts = _accountService.GetAll(),
-                        Categories = _categoryService.GetAll(),
-                        Subcategories = _subcategoryService.GetAll()
-                    };
-
-                    return View(viewModel);
+                    return View(await GetViewModel(movement));
                 }
                 catch (NotFoundException e)
                 {
@@ -172,29 +136,39 @@ namespace PersonalFinances.Controllers
             }
             else
             {
-                var viewModel = new MovementViewModel
-                {
-                    Movement = movement,
-                    Accounts = _accountService.GetAll(),
-                    Categories = _categoryService.GetAll(),
-                    Subcategories = _subcategoryService.GetAll()
-                };
-                return View(viewModel);
+                return View(GetViewModel(movement));
             }
         }
 
         // GET: Movements/Details
-        public ActionResult Details (int? Id)
+        public async Task<ActionResult> Details (int? Id)
         {
             try
             {
-                return View(_service.GetById(Id.GetValueOrDefault()));
+                return View(await _service.GetById(Id.GetValueOrDefault()));
             }
             catch (NotFoundException e)
             {
                 TempData["ErrorMessage"] = e.Message;
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound, e.Message);
             }
-        }   
+        }
+
+        /// <summary>
+        /// Get a MovementViewModel object
+        /// </summary>
+        /// <param name="movement"></param>
+        /// <returns></returns>
+        private async Task<MovementViewModel> GetViewModel (Movement movement)
+        {
+            return new MovementViewModel
+            {
+                Movement = movement,
+                Accounts = await _accountService.GetAll(),
+                Categories = await _categoryService.GetAll(),
+                Subcategories = await _subcategoryService.GetAll(),
+                Projects = await _projectService.GetAllActiveProjects()
+            };
+        }
     }
 }

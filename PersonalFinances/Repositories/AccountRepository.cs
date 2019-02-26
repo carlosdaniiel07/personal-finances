@@ -1,8 +1,9 @@
-﻿using PersonalFinances.Models;
-
+﻿using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+
+using PersonalFinances.Models;
 
 namespace PersonalFinances.Repositories
 {
@@ -12,13 +13,14 @@ namespace PersonalFinances.Repositories
         /// Get all accounts
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<Account> GetAccounts ()
+        public async Task<IEnumerable<Account>> GetAccounts ()
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Accounts
-                    .Include(a => a.Movements)    
-                .Where(c => c.Enabled).ToList();
+                return await context.Accounts
+                    .Include(a => a.Movements)
+                    .Include("Movements.Category")
+                .Where(c => c.Enabled).ToListAsync();
             }
         }
 
@@ -27,13 +29,14 @@ namespace PersonalFinances.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public Account GetAccountById (int id)
+        public async Task<Account> GetAccountById (int id)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Accounts
+                return await context.Accounts
                     .Include(a => a.Movements)
-                .SingleOrDefault(a => a.Id.Equals(id) && a.Enabled);
+                    .Include("Movements.Category")
+                .SingleOrDefaultAsync(a => a.Id.Equals(id) && a.Enabled);
             }
         }
 
@@ -42,11 +45,11 @@ namespace PersonalFinances.Repositories
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public string GetAccountNameById (int id)
+        public async Task<string> GetAccountNameById (int id)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Accounts.Where(a => a.Id.Equals(id)).Select(a => a.Name).First();
+                return await context.Accounts.Where(a => a.Id.Equals(id)).Select(a => a.Name).FirstAsync();
             }
         }
 
@@ -55,11 +58,11 @@ namespace PersonalFinances.Repositories
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public ICollection<Account> GetAccountsByName (string name)
+        public async Task<ICollection<Account>> GetAccountsByName (string name)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Accounts.Where(a => a.Name.Equals(name) && a.Enabled).ToList();
+                return await context.Accounts.Where(a => a.Name.Equals(name) && a.Enabled).ToListAsync();
             }
         }
 
@@ -68,11 +71,11 @@ namespace PersonalFinances.Repositories
         /// </summary>
         /// <param name="name">The account name</param>
         /// <returns></returns>
-        public Account GetAccountByName(string name)
+        public async Task<Account> GetAccountByName(string name)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return context.Accounts.Where(a => a.Name.Equals(name) && a.Enabled).FirstOrDefault();
+                return await context.Accounts.Where(a => a.Name.Equals(name) && a.Enabled).FirstOrDefaultAsync();
             }
         }
 
@@ -80,26 +83,26 @@ namespace PersonalFinances.Repositories
         /// Insert a new account
         /// </summary>
         /// <param name="account">An account to be inserted</param>
-        public void Insert (Account account)
+        public async Task Insert(Account account)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
                 context.Accounts.Add(account);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
 
-        } 
+        }
 
         /// <summary>
         /// Update an existing account
         /// </summary>
         /// <param name="account"></param>
-        public void Update (Account account)
+        public async Task Update (Account account)
         {
             using (DatabaseContext context = new DatabaseContext())
             {
                 context.Entry(account).State = EntityState.Modified;
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
         }
     }
