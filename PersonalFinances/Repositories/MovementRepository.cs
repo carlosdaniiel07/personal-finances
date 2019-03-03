@@ -24,6 +24,7 @@ namespace PersonalFinances.Repositories
                     .Include(m => m.Category)
                     .Include(m => m.Subcategory)
                     .Include(m => m.Project)
+                    .Include(m => m.Invoice.CreditCard)
                 .ToListAsync();
             }
         }

@@ -1,8 +1,8 @@
-﻿@model PersonalFinances.Models.Account
+﻿@model PersonalFinances.Models.ViewModels.CreditCardViewModel
 
 @{
-    ViewBag.Title = "New account";
-    SelectList accountTypeComboBox = new SelectList(Enum.GetNames(typeof(AccountType)));
+    ViewBag.Title = "New credit card";
+    SelectList availAbleDays = new SelectList(Model.AvailableDays);
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -11,11 +11,11 @@
     <section class="content-header">
         <h1>
             @ViewBag.Title
-            <small>Add a new account</small>
+            <small>Add a new card</small>
         </h1>
         <ol class="breadcrumb">
             <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="@Url.Action("Index", "Accounts")">Accounts</a></li>
+            <li><a href="@Url.Action("Index", "CreditCards")">Credit cards</a></li>
             <li class="active">@ViewBag.Title</li>
         </ol>
     </section>
@@ -27,26 +27,32 @@
             <div class="box-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <form role="form" action="@Url.Action("New", "Accounts")" method="post">
+                        <form role="form" action="@Url.Action("New", "CreditCards")" method="post">
                             <span class="text-red">@Html.ValidationSummary()</span>
-                            
+
                             <div class="form-group">
-                                @Html.LabelFor(a => a.Name)
-                                @Html.TextBoxFor(a => a.Name, new { Class = "form-control" })
+                                @Html.LabelFor(c => c.CreditCard.Name)
+                                @Html.TextBoxFor(c => c.CreditCard.Name, new { Class = "form-control" })
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        @Html.LabelFor(a => a.AccountType)
-                                        @Html.DropDownListFor(a => a.AccountType, accountTypeComboBox, new { Class = "form-control selectpicker" })
+                                        @Html.LabelFor(c => c.CreditCard.InvoiceClosure)
+                                        @Html.DropDownListFor(c => c.CreditCard.InvoiceClosure, availAbleDays, new { Class = "form-control selectpicker" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(c => c.CreditCard.PayDay)
+                                        @Html.DropDownListFor(c => c.CreditCard.PayDay, availAbleDays, new { Class = "form-control selectpicker" })
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        @Html.LabelFor(a => a.InitialBalance)
-                                        @Html.TextBoxFor(a => a.InitialBalance, new { Class = "form-control"})
+                                        @Html.LabelFor(c => c.CreditCard.Limit)
+                                        @Html.TextBoxFor(c => c.CreditCard.Limit, new { Class = "form-control" })
                                     </div>
                                 </div>
                             </div>

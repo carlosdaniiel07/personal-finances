@@ -18,6 +18,7 @@ namespace PersonalFinances.Models
         public string Description { get; set; }
 
         [Required]
+        [Range(0.01, double.MaxValue, ErrorMessage = "The minimum value is 0.01")]
         public double Value { get; set; }
         
         public double? Increase { get; set; }
@@ -52,6 +53,11 @@ namespace PersonalFinances.Models
 
         [Display(Name = "Project")]
         public int? ProjectId { get; set; }
+
+        public Invoice Invoice { get; set; }
+
+        [Display(Name = "Credit card")]
+        public int? InvoiceId { get; set; }
 
         [Required]
         [Display(Name = "Status")]

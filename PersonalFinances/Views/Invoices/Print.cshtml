@@ -1,0 +1,124 @@
+﻿@using System.Web.Optimization
+
+@model PersonalFinances.Models.Invoice
+
+@{ 
+    Layout = null;
+    ViewBag.Title = $"Invoice #{Model.Id}";
+}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>
+            @ViewBag.Title | Personal Finances App
+        </title>
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+        @Styles.Render("~/Bundles/css")
+    </head>
+    <body onload="window.print();">
+        <div class="wrapper">
+            <!-- Main content -->
+            <section class="invoice">
+                <!-- title row -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h2 class="page-header">
+                            <i class="fa fa-globe"></i> Personal Finances App
+                            <small class="pull-right">Date: @DateTime.Now.ToString()</small>
+                        </h2>
+                    </div>
+                    <!-- /.col -->
+                </div>
+
+                <!-- info row -->
+                <div class="row invoice-info">
+                    <div class="col-sm-4 invoice-col">
+                        Details
+                        <address>
+                            <b>Invoice #@Model.Id</b> <br /><br />
+                            <b>Credit card:</b> @Model.CreditCard.Name <br />
+                            <b>Total value:</b> @Model.TotalValue.ToString("F2") <br />
+                            <b>Invoice maturity:</b> @Model.MaturityDate.ToShortDateString() <br />
+                            <b>Payment date:</b> @Model.PaymentDate.GetValueOrDefault().ToShortDateStringDefaultIfNull() <br />
+                            <b>Invoice status:</b> @Model.InvoiceStatus
+                        </address>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+
+                <!-- Table row -->
+                <div class="row">
+                    <div class="col-xs-12 table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Identity #</th>
+                                    <th>Accounting date</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Project</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var movement in Model.Movements)
+                                {
+                                    <tr>
+                                        <td>@movement.Id</td>
+                                        <td>@movement.AccountingDate.ToShortDateString()</td>
+                                        <td>@movement.Description</td>
+                                        <td>@movement.Category.Name</td>
+                                        <td>
+                                            @if (movement.Project != null)
+                                            {
+                                                @movement.Project.Name
+                                            }
+                                        </td>
+                                        <td>@movement.TotalValue.ToString("F2")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+
+                <div class="row">
+                    <div class="col-xs-3">
+                        <p class="lead">Amount Due @Model.MaturityDate.ToShortDateString()</p>
+
+                        <div class="table-responsive">
+                            <table class="table">
+                                <tr>
+                                    <th style="width:50%">Subtotal:</th>
+                                    <td>@Model.TotalValue.ToString("F2")</td>
+                                </tr>
+                                <tr>
+                                    <th>Tax:</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th>Interest:</th>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <th>Total:</th>
+                                    <td>@Model.TotalValue.ToString("F2")</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
+            </section>
+            <!-- /.content -->
+        </div>
+    </body>
+</html>

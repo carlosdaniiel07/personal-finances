@@ -176,6 +176,13 @@
     <Content Include="Views\Projects\Details.cshtml" />
     <Content Include="Views\Projects\Delete.cshtml" />
     <Content Include="Views\Reports\BankStatement.cshtml" />
+    <Content Include="Views\CreditCards\Index.cshtml" />
+    <Content Include="Views\CreditCards\New.cshtml" />
+    <Content Include="Views\CreditCards\Edit.cshtml" />
+    <Content Include="Views\CreditCards\Remove.cshtml" />
+    <Content Include="Views\CreditCards\View.cshtml" />
+    <Content Include="Views\Invoices\Details.cshtml" />
+    <Content Include="Views\Invoices\Print.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -186,8 +193,10 @@
   <ItemGroup>
     <Compile Include="Controllers\AccountsController.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
+    <Compile Include="Controllers\CreditCardController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\ErrorsController.cs" />
+    <Compile Include="Controllers\InvoicesController.cs" />
     <Compile Include="Controllers\MovementsController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
@@ -212,18 +221,26 @@
     <Compile Include="Migrations\201902162156441_ProjectEntityAdjusts.Designer.cs">
       <DependentUpon>201902162156441_ProjectEntityAdjusts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903021817015_CreditCardAndInvoice.cs" />
+    <Compile Include="Migrations\201903021817015_CreditCardAndInvoice.Designer.cs">
+      <DependentUpon>201903021817015_CreditCardAndInvoice.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\CreditCard.cs" />
     <Compile Include="Models\Enums\AccountType.cs" />
+    <Compile Include="Models\Enums\InvoiceStatus.cs" />
     <Compile Include="Models\Enums\MovementStatus.cs" />
     <Compile Include="Models\Enums\ProjectStatus.cs" />
     <Compile Include="Models\Error.cs" />
+    <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\Movement.cs" />
     <Compile Include="Models\Project.cs" />
     <Compile Include="Models\Subcategory.cs" />
     <Compile Include="Models\Transfer.cs" />
     <Compile Include="Models\ViewModels\BankStatementViewModel.cs" />
+    <Compile Include="Models\ViewModels\CreditCardViewModel.cs" />
     <Compile Include="Models\ViewModels\DashboardViewModel.cs" />
     <Compile Include="Models\ViewModels\MovementViewModel.cs" />
     <Compile Include="Models\ViewModels\SubcategoryViewModel.cs" />
@@ -234,17 +251,22 @@
     </Compile>
     <Compile Include="Repositories\AccountRepository.cs" />
     <Compile Include="Repositories\CategoryRepository.cs" />
+    <Compile Include="Repositories\CreditCardRepository.cs" />
     <Compile Include="Repositories\DatabaseContext.cs" />
+    <Compile Include="Repositories\InvoiceRepository.cs" />
     <Compile Include="Repositories\MovementRepository.cs" />
     <Compile Include="Repositories\ProjectRepository.cs" />
     <Compile Include="Repositories\SubcategoryRepository.cs" />
     <Compile Include="Repositories\TransferRepository.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\CategoryService.cs" />
+    <Compile Include="Services\CreditCardService.cs" />
     <Compile Include="Services\Exceptions\AlreadyExistsException.cs" />
+    <Compile Include="Services\Exceptions\InvoiceNotFoundException.cs" />
     <Compile Include="Services\Exceptions\NotValidOperationException.cs" />
     <Compile Include="Services\Exceptions\ModelValidationException.cs" />
     <Compile Include="Services\Exceptions\NotFoundException.cs" />
+    <Compile Include="Services\InvoiceService.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\MovementService.cs" />
     <Compile Include="Services\ProjectService.cs" />
@@ -384,6 +406,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902162156441_ProjectEntityAdjusts.resx">
       <DependentUpon>201902162156441_ProjectEntityAdjusts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903021817015_CreditCardAndInvoice.resx">
+      <DependentUpon>201903021817015_CreditCardAndInvoice.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

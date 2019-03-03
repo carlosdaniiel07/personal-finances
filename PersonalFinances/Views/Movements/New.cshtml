@@ -14,6 +14,7 @@
     SelectList subcategoriesComboBox = new SelectList(Model.Subcategories, "Id", "Name", "Category.Name", new { });
     SelectList movementStatusComboBox = new SelectList(Enum.GetNames(typeof(MovementStatus)));
     SelectList projectsComboBox = new SelectList(Model.Projects, "Id", "Name", new { });
+    SelectList creditCardsComboBox = new SelectList(Model.CreditCards, "Id", "Name", new { });
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -66,7 +67,7 @@
                                         <td>@project.ProjectBalance.ToString("F2")</td>
                                         <td>@project.LeftBudget.ToString("F2")</td>
                                         <td>
-                                            @{ var projectBudgetUsedPercentage = project.BudgetUsedPercentage; }
+                                            @{ var projectBudgetUsedPercentage = Math.Round(project.BudgetUsedPercentage, 2); }
                                             <div class="progress progress-xs" title="@projectBudgetUsedPercentage%">
                                                 <div class="progress-bar progress-bar-danger" style="width: @Math.Ceiling(projectBudgetUsedPercentage)%"></div>
                                             </div>
@@ -148,6 +149,15 @@
                                                 @Html.DropDownListFor(m => m.Movement.AccountId, accountsComboBox, "(Choose one)", new { Class = "selectpicker form-control" })
                                             </div>
                                         </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                @Html.LabelFor(m => m.Movement.InvoiceId)
+                                                @Html.DropDownListFor(m => m.Movement.InvoiceId, creditCardsComboBox, "(Optional)", new { Class = "selectpicker form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 @Html.LabelFor(m => m.Movement.CategoryId)
