@@ -40,7 +40,7 @@ namespace PersonalFinances.Models
         {
             get
             {
-                return _service.TotalCrebit(Movements);
+                return Movements.TotalCredit();
             }
         }
 
@@ -49,7 +49,7 @@ namespace PersonalFinances.Models
         {
             get
             {
-                return _service.TotalDebit(Movements);
+                return Movements.TotalDebit();
             }
         }
 

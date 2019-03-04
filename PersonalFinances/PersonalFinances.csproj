@@ -183,6 +183,8 @@
     <Content Include="Views\CreditCards\View.cshtml" />
     <Content Include="Views\Invoices\Details.cshtml" />
     <Content Include="Views\Invoices\Print.cshtml" />
+    <Content Include="Views\Invoices\Pay.cshtml" />
+    <Content Include="Views\Invoices\RemoveMovement.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -242,6 +244,7 @@
     <Compile Include="Models\ViewModels\BankStatementViewModel.cs" />
     <Compile Include="Models\ViewModels\CreditCardViewModel.cs" />
     <Compile Include="Models\ViewModels\DashboardViewModel.cs" />
+    <Compile Include="Models\ViewModels\InvoicePaymentViewModel.cs" />
     <Compile Include="Models\ViewModels\MovementViewModel.cs" />
     <Compile Include="Models\ViewModels\SubcategoryViewModel.cs" />
     <Compile Include="Models\ViewModels\TransferViewModel.cs" />

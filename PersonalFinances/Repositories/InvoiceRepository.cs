@@ -22,6 +22,19 @@ namespace PersonalFinances.Repositories
         }
 
         /// <summary>
+        /// Insert an exsting Invoice
+        /// </summary>
+        /// <param name="invoice"></param>
+        public async Task Update (Invoice invoice)
+        {
+            using (DatabaseContext context = new DatabaseContext())
+            {
+                context.Entry(invoice).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+            }
+        }
+
+        /// <summary>
         /// Get an invoice by Id
         /// </summary>
         /// <param name="id"></param>

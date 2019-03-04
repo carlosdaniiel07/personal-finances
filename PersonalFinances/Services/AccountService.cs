@@ -45,12 +45,14 @@ namespace PersonalFinances.Services
         /// </summary>
         /// <param name="accountId"></param>
         /// <param name="ammount"></param>
-        public async Task AdjustBalance (int accountId, string movementType, double ammount)
+        public async Task AdjustBalance (int accountId)
         {
-            if (movementType.Equals("C"))
-                await IncreaseBalance(accountId, ammount);
-            else
-                await DecreaseBalance(accountId, ammount);
+            var account = await _repository.GetAccountById(accountId);
+            var newBalance = (account.InitialBalance + account.TotalCredit) - account.TotalDebit;
+
+            account.Balance = newBalance;
+
+            await _repository.Update(account);
         }
 
         /// <summary>
@@ -156,26 +158,6 @@ namespace PersonalFinances.Services
             double totalDebit = movements.TotalDebit();
 
             return totalCredit - totalDebit;
-        }
-
-        /// <summary>
-        /// Get total credit value from a Movement collection
-        /// </summary>
-        /// <param name="movements"></param>
-        /// <returns></returns>
-        public double TotalCrebit (IEnumerable<Movement> movements)
-        {
-            return movements.TotalCredit();
-        }
-
-        /// <summary>
-        /// Get total debit value from a Movement collection
-        /// </summary>
-        /// <param name="movements"></param>
-        /// <returns></returns>
-        public double TotalDebit (IEnumerable<Movement> movements)
-        {
-            return movements.TotalDebit();
         }
     }
 }

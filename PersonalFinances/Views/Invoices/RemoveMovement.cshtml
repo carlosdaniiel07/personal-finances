@@ -1,0 +1,83 @@
+﻿@model PersonalFinances.Models.Movement
+
+@{
+    ViewBag.Title = "Remove movement";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @ViewBag.Title
+            <small>Remove movement from invoice</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("Details", "Invoices", new { Id = Model.Invoice.Id })">Invoice</a></li>
+            <li class="active">@ViewBag.Title</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <!-- box -->
+        <div class="box box-danger">
+            <div class="box-body">
+                <dl class="dl-horizontal">
+                    <dt>@Html.DisplayNameFor(m => m.Decrease)</dt>
+                    <dd>@Html.DisplayFor(m => m.Description)</dd>
+
+                    <dt>@Html.DisplayNameFor(m => m.Type)</dt>
+                    <dd>@Html.DisplayFor(m => m.Type)</dd>
+
+                    <dt>@Html.DisplayNameFor(m => m.InclusionDate)</dt>
+                    <dd>@Model.InclusionDate.ToShortDateString()</dd>
+
+                    <dt>@Html.DisplayNameFor(m => m.AccountingDate)</dt>
+                    <dd>@Model.AccountingDate.ToShortDateString()</dd>
+
+                    <dt>@Html.DisplayNameFor(m => m.TotalValue)</dt>
+                    <dd>@Model.TotalValue.ToString("F2")</dd>
+
+                    <dt>@Html.DisplayNameFor(m => m.Account.Name)</dt>
+                    <dd>@Html.DisplayFor(m => m.Account.Name)</dd>
+
+                    <dt>@Html.DisplayNameFor(m => m.Category.Name)</dt>
+                    <dd>@Html.DisplayFor(m => m.Category.Name)</dd>
+
+                    <dt>@Html.DisplayNameFor(m => m.Subcategory.Name)</dt>
+                    <dd>@Html.DisplayFor(m => m.Subcategory.Name)</dd>
+
+                    <dt>@Html.DisplayNameFor(m => m.Project.Name)</dt>
+                    <dd>@Html.DisplayFor(m => m.Project.Name)</dd>
+
+                    <dt>@Html.DisplayNameFor(m => m.Invoice.CreditCard.Name)</dt>
+                    <dd>@Html.DisplayFor(m => m.Invoice.CreditCard.Name)</dd>
+                    
+                    <dt>@Html.DisplayNameFor(m => m.MovementStatus)</dt>
+                    <dd>@Html.DisplayFor(m => m.MovementStatus)</dd>
+
+                    <dt>@Html.DisplayNameFor(m => m.Observation)</dt>
+                    <dd>@Html.DisplayFor(m => m.Observation)</dd>
+                </dl>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <form action="@Url.Action("RemoveMovement", "Invoices")" method="post">
+                            @Html.AntiForgeryToken()
+
+                            @Html.HiddenFor(m => m.Id)
+
+                            <button type="submit" class="btn btn-flat btn-danger"><i class="fa fa-trash-o"></i> Remove</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

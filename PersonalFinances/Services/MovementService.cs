@@ -41,7 +41,7 @@ namespace PersonalFinances.Services
                 }
                 catch (InvoiceNotFoundException)
                 {
-                    var createdInvoice = _invoiceService.CreateNewObject(creditCard, movement.AccountingDate);
+                    var createdInvoice = _invoiceService.CreateInvoiceObject(creditCard, movement.AccountingDate);
                     _invoiceService.Insert(createdInvoice);
                     movement.InvoiceId = _creditCardService.GetCurrentInvoice(creditCard, movement.AccountingDate).Id;
                 }
@@ -50,7 +50,7 @@ namespace PersonalFinances.Services
             await _repository.Insert(movement);
 
             if (movement.MovementStatus.Equals(MovementStatus.Launched) && !movement.InvoiceId.HasValue)
-                await _accountService.AdjustBalance(movement.AccountId, movement.Type, movement.TotalValue);
+                await _accountService.AdjustBalance(movement.AccountId);
         }
 
         /// <summary>
@@ -63,43 +63,32 @@ namespace PersonalFinances.Services
 
             movement.Increase = movement.Increase ?? 0;
             movement.Decrease = movement.Decrease ?? 0;
-            var dif = Math.Abs(movement.TotalValue - oldMovement.TotalValue);
 
-            if(movement.MovementStatus.Equals(MovementStatus.Launched))
+            var creditCardId = movement.InvoiceId;
+
+            if (creditCardId.HasValue)
             {
-                if(movement.AccountId.Equals(oldMovement.Account.Id))
+                var creditCard = await _creditCardService.GetById(creditCardId.Value);
+
+                _creditCardService.CanBeUsed(creditCard, movement);
+
+                try
                 {
-                    if (oldMovement.MovementStatus.Equals(MovementStatus.Pending))
-                    {
-                        await _accountService.AdjustBalance(movement.AccountId, movement.Type, movement.TotalValue);
-                    }
-                    else
-                    {
-                        string operation;
-
-                        if (movement.Type.Equals("C"))
-                            operation = (movement.TotalValue > oldMovement.TotalValue) ? "C" : "D";
-                        else
-                            operation = (movement.TotalValue > oldMovement.TotalValue) ? "D" : "C";
-
-                        await _accountService.AdjustBalance(movement.AccountId, operation, dif);
-                    }
+                    movement.InvoiceId = _creditCardService.GetCurrentInvoice(creditCard, movement.AccountingDate).Id;
                 }
-                else
+                catch (InvoiceNotFoundException)
                 {
-                    if (oldMovement.MovementStatus.Equals(MovementStatus.Launched))
-                        await _accountService.AdjustBalance(oldMovement.Account.Id, GetInverseOperation(movement.Type), oldMovement.TotalValue);
-
-                    await _accountService.AdjustBalance(movement.AccountId, movement.Type, movement.TotalValue);
+                    var createdInvoice = _invoiceService.CreateInvoiceObject(creditCard, movement.AccountingDate);
+                    _invoiceService.Insert(createdInvoice);
+                    movement.InvoiceId = _creditCardService.GetCurrentInvoice(creditCard, movement.AccountingDate).Id;
                 }
-            }
-            else
-            {
-                if(oldMovement.MovementStatus.Equals(MovementStatus.Launched))
-                    await _accountService.AdjustBalance(oldMovement.AccountId, GetInverseOperation(oldMovement.Type), oldMovement.TotalValue);
             }
 
             await _repository.Update(movement);
+
+            if (!oldMovement.Account.Id.Equals(movement.AccountId))
+                await _accountService.AdjustBalance(oldMovement.Account.Id);
+            await _accountService.AdjustBalance(movement.AccountId);
         }
 
         /// <summary>
@@ -110,10 +99,10 @@ namespace PersonalFinances.Services
         {
             var movement = await GetById(id);
 
-            if (movement.MovementStatus.Equals(MovementStatus.Launched))
-                await _accountService.AdjustBalance(movement.Account.Id, GetInverseOperation(movement.Type), movement.TotalValue);
-
             await _repository.Remove(movement);
+
+            if (movement.MovementStatus.Equals(MovementStatus.Launched))
+                await _accountService.AdjustBalance(movement.Account.Id);
         }
 
         /// <summary>
@@ -129,7 +118,7 @@ namespace PersonalFinances.Services
         /// Get all movements (filter by account and accounting date range)
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<Movement>> GetAll (BankStatementViewModel bankStatement)
+        public async Task<IEnumerable<Movement>> GetAll(BankStatementViewModel bankStatement)
         {
             return await _repository.GetAllMovements(bankStatement);
         }

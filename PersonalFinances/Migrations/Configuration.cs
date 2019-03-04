@@ -4,36 +4,48 @@ namespace PersonalFinances.Migrations
 
     using Models;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<PersonalFinances.Repositories.DatabaseContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<Repositories.DatabaseContext>
     {
-        private readonly bool _seedDatabase = false;
+        private readonly bool _seedDatabase = true;
 
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(PersonalFinances.Repositories.DatabaseContext context)
+        protected override void Seed(Repositories.DatabaseContext context)
         {
             if (_seedDatabase)
             {
                 // Add Transfer category and subcategory
-                Subcategory creditSubcategory = new Subcategory
+                Subcategory transferCreditSubcategory = new Subcategory
                 {
                     Name = "Other",
                     Category = new Category { Name = "Transfer", Type = "C", Enabled = true },
                     Enabled = true
                 };
 
-                Subcategory debitSubcategory = new Subcategory
+                Subcategory transferDebitSubcategory = new Subcategory
                 {
                     Name = "Other",
                     Category = new Category { Name = "Transfer", Type = "D", Enabled = true },
                     Enabled = true
                 };
 
-                context.Subcategories.Add(creditSubcategory);
-                context.Subcategories.Add(debitSubcategory);
+                // Add Payment category and Credit card subcategory
+                Subcategory creditCardSubcategory = new Subcategory
+                {
+                    Name = "Credit card",
+                    Category = new Category { Name = "Payments", Type = "D", Enabled = true },
+                    Enabled = true
+                };
+
+                context.Subcategories.AddOrUpdate(
+                    transferCreditSubcategory, 
+                    transferDebitSubcategory, 
+                    creditCardSubcategory
+                );
+
                 context.SaveChanges();
             }
         }

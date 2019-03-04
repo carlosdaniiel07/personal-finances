@@ -31,73 +31,75 @@
 
                 <br />
 
-                <table class="table table-hover datatable">
-                    <thead>
-                        <tr>
-                            <th>Accounting</th>
-                            <th>Type</th>
-                            <th>Description</th>
-                            <th>Ammount</th>
-                            <th>Account</th>
-                            <th>Credit card</th>
-                            <th>Category</th>
-                            <th>Status</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var movement in Model)
-                        {
+                <div class="table-responsive">
+                    <table class="table table-hover datatable">
+                        <thead>
                             <tr>
-                                <td>@movement.AccountingDate.ToShortDateString()</td>
-                                @if (movement.Type.Equals("C"))
-                                {
-                                    <td><span class="label label-success">Credit</span></td>
-                                }
-                                else
-                                {
-                                    <td><span class="label label-danger">Debit</span></td>
-                                }
-                                <td>@movement.Description</td>
-                                <td>@movement.TotalValue.ToString("F2")</td>
-                                <td>@movement.Account.Name</td>
-                                <td class="text-center">
-                                    @if (movement.Invoice != null)
+                                <th>Accounting</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                                <th>Ammount</th>
+                                <th>Account</th>
+                                <th>Credit card</th>
+                                <th>Category</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var movement in Model)
+                            {
+                                <tr>
+                                    <td>@movement.AccountingDate.ToShortDateString()</td>
+                                    @if (movement.Type.Equals("C"))
                                     {
-                                        <i class="fa fa-check text-green" title="@movement.Invoice.CreditCard.Name"></i>
+                                        <td><span class="label label-success">Credit</span></td>
                                     }
                                     else
                                     {
-                                        <i class="fa fa-times text-red"></i>
+                                        <td><span class="label label-danger">Debit</span></td>
                                     }
-                                </td>
-                                <td>@movement.Category.Name</td>
-                                @if (movement.MovementStatus.Equals(MovementStatus.Launched))
-                                {
-                                    <td class="text-green"><i class="fa fa-check"></i> @movement.MovementStatus</td>
-                                }
-                                else
-                                {
-                                    <td class="text-yellow"><i class="fa fa-exclamation-triangle"></i> @movement.MovementStatus</td>
-                                }
-                                <td>
-                                    <div class="btn-group">
-                                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                            <i class="fa fa-wrench"></i> Options    
-                                            <span class="fa fa-caret-down"></span>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="@Url.Action("Details", "Movements", new { Id = movement.Id})"><i class="fa fa-eye"></i> Details</a></li>
-                                            <li><a href="@Url.Action("Edit", "Movements", new { Id = movement.Id})"><i class="fa fa-pencil-square-o"></i> Edit</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="@Url.Action("Delete", "Movements", new { Id = movement.Id})"><i class="fa fa-trash"></i> Remove</a></li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+                                    <td>@movement.Description</td>
+                                    <td>@movement.TotalValue.ToString("F2")</td>
+                                    <td>@movement.Account.Name</td>
+                                    <td class="text-center">
+                                        @if (movement.Invoice != null)
+                                        {
+                                            <i class="fa fa-check text-green" title="@movement.Invoice.CreditCard.Name"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="fa fa-times text-red"></i>
+                                        }
+                                    </td>
+                                    <td>@movement.Category.Name</td>
+                                    @if (movement.MovementStatus.Equals(MovementStatus.Launched))
+                                    {
+                                        <td class="text-green"><i class="fa fa-check"></i> @movement.MovementStatus</td>
+                                    }
+                                    else
+                                    {
+                                        <td class="text-yellow"><i class="fa fa-exclamation-triangle"></i> @movement.MovementStatus</td>
+                                    }
+                                    <td>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                                <i class="fa fa-wrench"></i> Options
+                                                <span class="fa fa-caret-down"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="@Url.Action("Details", "Movements", new { Id = movement.Id})"><i class="fa fa-eye"></i> Details</a></li>
+                                                <li><a href="@Url.Action("Edit", "Movements", new { Id = movement.Id})"><i class="fa fa-pencil-square-o"></i> Edit</a></li>
+                                                <li class="divider"></li>
+                                                <li><a href="@Url.Action("Delete", "Movements", new { Id = movement.Id})"><i class="fa fa-trash"></i> Remove</a></li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <!-- /.box-body -->
         </div>

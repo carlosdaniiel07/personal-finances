@@ -88,11 +88,15 @@
 
                             @if (Model.Closed)
                             {
-                                <a href="@Url.Action("Print", "Invoices", new { Id = Model.Id })" class="btn btn-success btn-flat pull-left"><i class="fa fa-print"></i> Print invoice</a>
+                                <a href="@Url.Action("Print", "Invoices", new { Id = Model.Id })" class="btn btn-sm btn-success btn-flat pull-left"><i class="fa fa-print"></i> Print invoice</a>
                             }
                             else
                             {
-                                <a href="#" class="btn btn-success btn-flat pull-left disabled"><i class="fa fa-print"></i> Print invoice</a>
+                                <a href="#" class="btn btn-sm btn-success btn-flat pull-left disabled"><i class="fa fa-print"></i> Print invoice</a>
+                            }
+                            @if (Model.InvoiceStatus == InvoiceStatus.Pending)
+                            {
+                                <a href="@Url.Action("Pay", "Invoices", new { Id = Model.Id })" class="btn btn-sm btn-primary btn-flat pull-left"><i class="fa fa-money"></i> Pay</a>
                             }
                         </form>
                     </div>
@@ -144,7 +148,7 @@
                                 </td>
                                 <td>
                                     <div class="btn-group">
-                                        <a class="btn btn-sm btn-flat btn-danger" href=""><i class="fa fa-times"></i> Remove from invoice</a>
+                                        <a class="btn btn-sm btn-flat btn-danger" href="@Url.Action("RemoveMovement", "Invoices", new { Id = movement.Id })"><i class="fa fa-times"></i> Remove from invoice</a>
                                     </div>
                                 </td>
                             </tr>
