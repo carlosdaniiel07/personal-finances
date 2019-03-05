@@ -56,6 +56,16 @@ namespace PersonalFinances.Services
         }
 
         /// <summary>
+        /// Adjust the balance of a collection of accounts
+        /// </summary>
+        /// <param name="accounts"></param>
+        /// <returns></returns>
+        public async Task AdjustBalance (IEnumerable<Account> accounts)
+        {
+            await _repository.Update(accounts.Select((a) => { a.Balance = (a.InitialBalance + a.TotalCredit) - a.TotalDebit; return a; }));
+        }
+
+        /// <summary>
         /// Increase the balance of an account
         /// </summary>
         /// <param name="accountId"></param>

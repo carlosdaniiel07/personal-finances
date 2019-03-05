@@ -121,7 +121,8 @@ namespace PersonalFinances.Services
                 CategoryId = category.Id,
                 SubcategoryId = subcategory.Id,
                 MovementStatus = transfer.TransferStatus,
-                Observation = transfer.Observation
+                Observation = transfer.Observation,
+                CanEdit = false
             };
         }
 
@@ -151,7 +152,8 @@ namespace PersonalFinances.Services
                 CategoryId = category.Id,
                 SubcategoryId = subcategory.Id,
                 MovementStatus = transfer.TransferStatus,
-                Observation = transfer.Observation
+                Observation = transfer.Observation,
+                CanEdit = false
             };
         }
     }

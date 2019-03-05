@@ -12,6 +12,7 @@ namespace PersonalFinances.Models
 
         [Required]
         [StringLength(30)]
+        [Display(Name = "Credit card name")]
         public string Name { get; set; }
 
         [Display(Name = "Invoice closure")]
@@ -48,7 +49,15 @@ namespace PersonalFinances.Models
                 return Limit - Invoices.Where(i => i.InvoiceStatus != Enums.InvoiceStatus.Paid).Sum(i => i.TotalValue);
             }
         }
-        
+
+        public Invoice NextInvoiceToPay
+        {
+            get
+            {
+                return _service.GeNextInvoiceToPay(this);
+            }
+        }
+
         private CreditCardService _service = new CreditCardService();
     }
 }

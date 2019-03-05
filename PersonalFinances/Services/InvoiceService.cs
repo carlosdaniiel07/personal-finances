@@ -44,6 +44,7 @@ namespace PersonalFinances.Services
                 throw new InvalidOperationException($"The max value to pay is {viewModel.Invoice.TotalValue.ToString("F2")}");
 
             await _movementService.Add(await CreateInvoicePaymentMovementObject(viewModel));
+            await _movementService.Update(invoice.Movements.Select((m) => { m.MovementStatus = MovementStatus.Launched; return m; }), false);
             await _repository.Update(invoice);
         }
 
@@ -57,6 +58,9 @@ namespace PersonalFinances.Services
 
             var movement = await _movementService.GetById(movementId);
 
+            if (movement.Invoice.InvoiceStatus != InvoiceStatus.NotClosed)
+                throw new NotValidOperationException($"The invoice #{movement.Invoice.Id} ({movement.Invoice.Reference}) is already closed");
+
             movement.Invoice = null;
             movement.InvoiceId = null;
 
@@ -69,7 +73,7 @@ namespace PersonalFinances.Services
         /// <returns>A Invoice object</returns>
         public Invoice CreateInvoiceObject (CreditCard creditCard, DateTime accountingDate)
         {
-            var reference = GetInvoiceReference(creditCard, accountingDate);
+            var reference = GetInvoiceReferenceByAccountingDate(int.Parse(creditCard.InvoiceClosure), accountingDate);
             var maturityDate = DateTime.ParseExact($"{creditCard.PayDay}/{reference}", "d/MMM/yy",
                 System.Globalization.CultureInfo.InstalledUICulture).AddMonths(1);
 
@@ -105,7 +109,8 @@ namespace PersonalFinances.Services
                 AccountId = invoicePaymentViewModel.AccountId,
                 CategoryId = paymentCategory.Id,
                 SubcategoryId = creditCardSubcategory.Id,
-                MovementStatus = MovementStatus.Launched
+                MovementStatus = MovementStatus.Launched,
+                CanEdit = false
             };
         }
 
@@ -115,21 +120,47 @@ namespace PersonalFinances.Services
         /// <param name="creditCard"></param>
         /// <param name="accountingDate"></param>
         /// <returns></returns>
-        public string GetInvoiceReference (CreditCard creditCard, DateTime accountingDate)
+        public string GetInvoiceReferenceByAccountingDate (int creditCardClosureDay, DateTime accountingDate)
         {
-            Dictionary<string, DateTime> range = new Dictionary<string, DateTime>();
+            List<DateTime[]> ranges = new List<DateTime[]>();
+            var accountingYear = accountingDate.Year;
 
-            range.Add("minDate", new DateTime((accountingDate.Month.Equals(1) ? accountingDate.Year - 1 : accountingDate.Year),
-                    (accountingDate.Month.Equals(1) ? 12 : accountingDate.Month - 1), int.Parse(creditCard.InvoiceClosure)));
-            range.Add("maxDate", new DateTime((accountingDate.Month.Equals(12) ? accountingDate.AddYears(1).Year : accountingDate.Year),
-                    (accountingDate.Day > int.Parse(creditCard.InvoiceClosure) ? accountingDate.AddMonths(1).Month : accountingDate.Month), 
-                        int.Parse(creditCard.InvoiceClosure)));
+            // Range (min date x max date)
+            for (var monthNumber = 1; monthNumber <= 12; monthNumber++)
+            {
+                DateTime minDate, maxDate;
+                int day, month, year;
 
-            if (accountingDate > range["minDate"] && accountingDate <= range["maxDate"])
-                return string.Concat(range["maxDate"].ToString("MMM"), "/", range["maxDate"].ToString("yy"));
-            else
-                return string.Concat(accountingDate.AddMonths(1).ToString("MMM"), "/",
-                    ((accountingDate.Month.Equals(12)) ? accountingDate.AddYears(1) : accountingDate).ToString("yy"));
+                // Min date
+                if (monthNumber.Equals(1))
+                {
+                    year = accountingYear - 1;
+                    month = 12;
+                }
+                else
+                {
+                    year = accountingYear;
+                    month = monthNumber - 1;
+                }
+
+                day = (DateTime.DaysInMonth(year, month) < creditCardClosureDay ? DateTime.DaysInMonth(year, month) : creditCardClosureDay);
+                minDate = new DateTime(year, month, day);
+
+                // Max date
+                year = accountingYear;
+                month = monthNumber;
+                day = (DateTime.DaysInMonth(year, month)) < creditCardClosureDay ? DateTime.DaysInMonth(year, month) : creditCardClosureDay;
+
+                maxDate = new DateTime(year, month, day);
+
+                ranges.Add(new DateTime[] { minDate, maxDate });
+            }
+
+            foreach (var range in ranges)
+                if (accountingDate > range[0] && accountingDate <= range[1])
+                    return string.Concat(range[1].ToString("MMM"), "/", range[1].Year.ToString("yyyy"));
+
+            return string.Empty;
         }
 
         /// <summary>
@@ -139,11 +170,16 @@ namespace PersonalFinances.Services
         /// <returns></returns>
         public async Task<Invoice> GetById (int id)
         {
-            return await _repository.GetInvoiceById(id);
+            var invoice = await _repository.GetInvoiceById(id);
+
+            if (invoice != null)
+                return invoice;
+            else
+                throw new NotFoundException("This invoice not exist");
         }
         
         /// <summary>
-        /// Get an closed invoice by Id
+        /// Get a closed invoice by Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>

@@ -55,7 +55,17 @@
                                     <td>@creditCard.PayDay</td>
                                     <td>
                                         <div class="btn-group">
-                                            <a class="btn btn-sm btn-primary" href="#"><i class="fa fa-file-text-o"></i> Current invoice</a>
+                                            @{ 
+                                                var nextInvoiceToPay = creditCard.NextInvoiceToPay;
+                                            }
+                                            @if (nextInvoiceToPay != null)
+                                            {
+                                                <a class="btn btn-sm btn-primary" href="@Url.Action("Details", "Invoices", new { Id = nextInvoiceToPay.Id })" title="Maturity date: @nextInvoiceToPay.MaturityDate.ToShortDateString() - Value: @nextInvoiceToPay.TotalValue.ToString("F2")"><i class="fa fa-file-text-o"></i> Current invoice</a>
+                                            }
+                                            else
+                                            {
+                                                <a class="btn btn-sm btn-primary disabled" href="#"><i class="fa fa-file-text-o"></i> Current invoice</a>
+                                            }
                                         </div>
                                     </td>
                                     <td>

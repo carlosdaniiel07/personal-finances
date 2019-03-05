@@ -86,7 +86,7 @@
 
                             <br />
 
-                            @if (Model.Closed)
+                            @if (Model.InvoiceStatus != InvoiceStatus.NotClosed)
                             {
                                 <a href="@Url.Action("Print", "Invoices", new { Id = Model.Id })" class="btn btn-sm btn-success btn-flat pull-left"><i class="fa fa-print"></i> Print invoice</a>
                             }
@@ -146,9 +146,16 @@
                                         @movement.Project.Name
                                     }
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <div class="btn-group">
-                                        <a class="btn btn-sm btn-flat btn-danger" href="@Url.Action("RemoveMovement", "Invoices", new { Id = movement.Id })"><i class="fa fa-times"></i> Remove from invoice</a>
+                                        @if (Model.InvoiceStatus == InvoiceStatus.NotClosed)
+                                        {
+                                            <a class="btn btn-xs btn-danger" href="@Url.Action("RemoveMovement", "Invoices", new { Id = movement.Id })"><i class="fa fa-times"></i> Remove from invoice</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-xs btn-danger disabled" href="#"><i class="fa fa-times"></i> Remove from invoice</a>
+                                        }
                                     </div>
                                 </td>
                             </tr>

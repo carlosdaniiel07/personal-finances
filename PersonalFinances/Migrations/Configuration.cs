@@ -22,14 +22,16 @@ namespace PersonalFinances.Migrations
                 {
                     Name = "Other",
                     Category = new Category { Name = "Transfer", Type = "C", Enabled = true },
-                    Enabled = true
+                    Enabled = true,
+                    CanEdit = false
                 };
 
                 Subcategory transferDebitSubcategory = new Subcategory
                 {
                     Name = "Other",
                     Category = new Category { Name = "Transfer", Type = "D", Enabled = true },
-                    Enabled = true
+                    Enabled = true,
+                    CanEdit = false
                 };
 
                 // Add Payment category and Credit card subcategory
@@ -37,7 +39,8 @@ namespace PersonalFinances.Migrations
                 {
                     Name = "Credit card",
                     Category = new Category { Name = "Payments", Type = "D", Enabled = true },
-                    Enabled = true
+                    Enabled = true,
+                    CanEdit = false
                 };
 
                 context.Subcategories.AddOrUpdate(

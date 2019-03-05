@@ -113,7 +113,7 @@
                                 <td>@invoice.PaymentDate.GetValueOrDefault().ToShortDateStringDefaultIfNull()</td>
                                 <td>@invoice.TotalValue.ToString("F2")</td>
                                 <td><span class="label label-primary">@invoice.InvoiceStatus</span></td>
-                                <td>
+                                <td class="text-center">
                                     <div class="btn-group">
                                         <a class="btn btn-flat btn-sm btn-default" href="@Url.Action("Details", "Invoices", new { Id = invoice.Id })"><i class="fa fa-eye"></i> Details</a>
                                     </div>

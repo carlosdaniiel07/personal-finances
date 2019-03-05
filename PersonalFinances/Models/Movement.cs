@@ -66,6 +66,8 @@ namespace PersonalFinances.Models
         [StringLength(100)]
         public string Observation { get; set; }
 
+        public bool CanEdit { get; set; }
+
         [Display(Name = "Total value")]
         public double TotalValue
         {

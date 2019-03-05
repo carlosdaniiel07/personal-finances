@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -10,8 +11,7 @@ namespace PersonalFinances.Models
     {
         public int Id { get; set; }
         
-        [Required]
-        [StringLength(6, MinimumLength = 6)]
+        [StringLength(8, MinimumLength = 8)]
         public string Reference { get; set; }
 
         [Display(Name = "Maturity date")]
@@ -38,7 +38,7 @@ namespace PersonalFinances.Models
         {
             get
             {
-                return Movements.TotalDebit();
+                return Movements.Sum(m => m.TotalValue);
             }
         }
     }

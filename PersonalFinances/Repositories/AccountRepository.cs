@@ -105,5 +105,19 @@ namespace PersonalFinances.Repositories
                 await context.SaveChangesAsync();
             }
         }
+
+        /// <summary>
+        /// Update collection of account
+        /// </summary>
+        /// <param name="account"></param>
+        public async Task Update (IEnumerable<Account> accounts)
+        {
+            using (DatabaseContext context = new DatabaseContext())
+            {
+                foreach (var account in accounts)
+                    context.Entry(accounts).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }

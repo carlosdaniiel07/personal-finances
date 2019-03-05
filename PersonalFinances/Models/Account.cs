@@ -12,6 +12,7 @@ namespace PersonalFinances.Models
 
         [Required]
         [StringLength(30)]
+        [Display(Name = "Account name")]
         public string Name { get; set; }
 
         [Required]

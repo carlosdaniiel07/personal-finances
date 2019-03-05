@@ -42,6 +42,7 @@ namespace PersonalFinances.Repositories
                     .Include(m => m.Category)
                     .Include(m => m.Subcategory)
                     .Include(m => m.Project)
+                    .Include(m => m.Invoice.CreditCard)
                 .Where(m => m.Account.Id.Equals(bankStatement.Account));
 
                 if (bankStatement.Category.HasValue)
@@ -111,7 +112,6 @@ namespace PersonalFinances.Repositories
                     .Include(m => m.Category)
                     .Include(m => m.Subcategory)
                     .Include(m => m.Project)
-                    .Include(m => m.Invoice)
                     .Include(m => m.Invoice.CreditCard)
                 .SingleOrDefaultAsync(m => m.Id.Equals(id));
             }
@@ -139,6 +139,20 @@ namespace PersonalFinances.Repositories
             using (DatabaseContext context = new DatabaseContext())
             {
                 context.Entry(movement).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+            }
+        }
+
+        /// <summary>
+        /// Update a collection of movements
+        /// </summary>
+        /// <param name="movement"></param>
+        public async Task Update (IEnumerable<Movement> movements)
+        {
+            using (DatabaseContext context = new DatabaseContext())
+            {
+                foreach (var movement in movements)
+                    context.Entry(movements).State = EntityState.Modified;
                 await context.SaveChangesAsync();
             }
         }

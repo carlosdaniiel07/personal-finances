@@ -71,19 +71,31 @@ namespace PersonalFinances.Services
         }
 
         /// <summary>
-        /// Get a current invoice from a credit card based on date reference (monthName/year)
+        /// Get an invoice from a credit card based on date reference (monthName/year)
         /// </summary>
         /// <param name="creditCardId"></param>
         /// <returns></returns>
-        public Invoice GetCurrentInvoice (CreditCard creditCard, DateTime accountingDate)
+        public async Task<Invoice> GetInvoiceByAccountingDate (int creditCardId, DateTime accountingDate)
         {
-            var reference = _invoiceService.GetInvoiceReference(creditCard, accountingDate);
+            var creditCard = await GetById(creditCardId);
+            var reference = _invoiceService.GetInvoiceReferenceByAccountingDate(int.Parse(creditCard.InvoiceClosure), accountingDate);
             var currentInvoice = creditCard.Invoices.SingleOrDefault(i => i.Reference.Equals(reference));
 
             if (currentInvoice != null)
                 return currentInvoice;
             else
                 throw new InvoiceNotFoundException($"Not found a {reference} invoice from this credit card");
+        }
+
+        /// <summary>
+        /// Get the next invoice to pay
+        /// </summary>
+        /// <returns></returns>
+        public Invoice GeNextInvoiceToPay (CreditCard creditCard)
+        {
+            return creditCard.Invoices
+                .Where(i => i.InvoiceStatus != InvoiceStatus.Paid).DefaultIfEmpty(new Invoice())
+            .OrderBy(i => i.MaturityDate).FirstOrDefault();
         }
 
         /// <summary>
@@ -108,10 +120,10 @@ namespace PersonalFinances.Services
         public void CanBeUsed (CreditCard creditCard, Movement movement)
         {
             if (!movement.Type.Equals("D"))
-                throw new InvalidOperationException("Credit cards can be used only with expenses movements");
+                throw new NotValidOperationException("Credit cards can be used only with expenses movements");
 
             if (!(creditCard.RemainingLimit >= movement.TotalValue))
-                throw new InvalidOperationException($"The remaining balance of {creditCard.Name} credit card is {creditCard.RemainingLimit.ToString("F2")}");
+                throw new NotValidOperationException($"The remaining balance of {creditCard.Name} credit card is {creditCard.RemainingLimit.ToString("F2")}");
         }
 
         /// <summary>
