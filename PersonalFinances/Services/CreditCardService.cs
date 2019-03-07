@@ -94,7 +94,7 @@ namespace PersonalFinances.Services
         public Invoice GeNextInvoiceToPay (CreditCard creditCard)
         {
             return creditCard.Invoices
-                .Where(i => i.InvoiceStatus != InvoiceStatus.Paid).DefaultIfEmpty(new Invoice())
+                .Where(i => i.InvoiceStatus != InvoiceStatus.Paid)
             .OrderBy(i => i.MaturityDate).FirstOrDefault();
         }
 

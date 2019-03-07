@@ -36,6 +36,7 @@ namespace PersonalFinances.Repositories
                 return await context.Accounts
                     .Include(a => a.Movements)
                     .Include("Movements.Category")
+                    .Include("Movements.Invoice.CreditCard")
                 .SingleOrDefaultAsync(a => a.Id.Equals(id) && a.Enabled);
             }
         }
@@ -115,7 +116,7 @@ namespace PersonalFinances.Repositories
             using (DatabaseContext context = new DatabaseContext())
             {
                 foreach (var account in accounts)
-                    context.Entry(accounts).State = EntityState.Modified;
+                    context.Entry(account).State = EntityState.Modified;
                 await context.SaveChangesAsync();
             }
         }

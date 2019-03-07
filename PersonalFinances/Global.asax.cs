@@ -15,7 +15,10 @@ namespace PersonalFinances
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
+
+            WebApiConfig.RegisterRoutes(RouteTable.Routes);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
+
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
 

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Data.Entity;
 
 using PersonalFinances.Models;
+using PersonalFinances.Models.Enums;
 using PersonalFinances.Models.ViewModels;
 
 namespace PersonalFinances.Repositories
@@ -26,6 +26,24 @@ namespace PersonalFinances.Repositories
                     .Include(m => m.Project)
                     .Include(m => m.Invoice.CreditCard)
                 .ToListAsync();
+            }
+        }
+
+        /// <summary>
+        /// Get all pending movements
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<Movement>> GetAllPendingMovements ()
+        {
+            using (DatabaseContext context = new DatabaseContext())
+            {
+                return await context.Movements
+                    .Include(m => m.Account)
+                    .Include(m => m.Category)
+                    .Include(m => m.Subcategory)
+                    .Include(m => m.Project)
+                    .Include(m => m.Invoice.CreditCard)
+                .Where(m => m.MovementStatus != MovementStatus.Launched).ToListAsync();
             }
         }
 
@@ -71,12 +89,7 @@ namespace PersonalFinances.Repositories
         {
             using (DatabaseContext context = new DatabaseContext())
             {
-                return await context.Movements
-                    .Include(m => m.Account)
-                    .Include(m => m.Category)
-                    .Include(m => m.Subcategory)
-                    .Include(m => m.Project)
-                .Where(m => m.Account.Id.Equals(accountId)).ToListAsync();
+                return await context.Movements.Where(m => m.Account.Id.Equals(accountId)).ToListAsync();
             }
         }
 
@@ -152,7 +165,7 @@ namespace PersonalFinances.Repositories
             using (DatabaseContext context = new DatabaseContext())
             {
                 foreach (var movement in movements)
-                    context.Entry(movements).State = EntityState.Modified;
+                    context.Entry(movement).State = EntityState.Modified;
                 await context.SaveChangesAsync();
             }
         }

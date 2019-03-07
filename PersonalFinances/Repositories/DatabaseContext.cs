@@ -19,6 +19,7 @@ namespace PersonalFinances.Repositories
         public DatabaseContext() 
             : base("LocalConnectionString")
         {
+            Configuration.LazyLoadingEnabled = true;
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

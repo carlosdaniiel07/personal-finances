@@ -27,6 +27,7 @@ namespace PersonalFinances.Services
             movement.Increase = movement.Increase ?? 0;
             movement.Decrease = movement.Decrease ?? 0;
             movement.InclusionDate = DateTime.Now;
+            movement.CanEdit = true;
 
             var creditCardId = movement.InvoiceId;
 
@@ -132,6 +133,24 @@ namespace PersonalFinances.Services
         }
 
         /// <summary>
+        /// Update status of all movements that already is expired
+        /// </summary>
+        /// <returns></returns>
+        public async Task UpdateMovementsStatusOfPendingMovements ()
+        {
+            var movements = await _repository.GetAllPendingMovements();
+
+            var pendingMovements = movements.Where(m => m.AccountingDate.CompareTo(DateTime.Today) < 0 && m.Invoice == null)
+            .Select((m) =>
+            {
+                m.MovementStatus = MovementStatus.Launched;
+                return m;
+            }).ToList();
+
+            await Update(pendingMovements, true);
+        }
+
+        /// <summary>
         /// Get all movements
         /// </summary>
         /// <returns></returns>
@@ -147,6 +166,16 @@ namespace PersonalFinances.Services
         public async Task<IEnumerable<Movement>> GetAll(BankStatementViewModel bankStatement)
         {
             return await _repository.GetAllMovements(bankStatement);
+        }
+
+        /// <summary>
+        /// Get all movements from a specified account
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Movement>> GetAll (int accountId)
+        {
+            return await _repository.GetMovementsByAccount(accountId);
         }
 
         /// <summary>

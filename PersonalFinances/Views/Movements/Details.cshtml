@@ -179,6 +179,10 @@
                             {
                                 <a href="@Url.Action("Details", "Projects", new { Id = Model.Project.Id })" class="list-group-item"><i class="fa fa-external-link"></i> &nbsp; View project</a>
                             }
+                            @if (Model.Invoice != null)
+                            {
+                                <a href="@Url.Action("View", "CreditCards", new { Id = Model.Invoice.CreditCard.Id })" class="list-group-item"><i class="fa fa-external-link"></i> &nbsp; View credit card</a>
+                            }
                         </div>
                     </div>
                     <!-- /.body -->

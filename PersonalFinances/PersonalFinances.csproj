@@ -206,8 +206,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
-    <Compile Include="Controllers\Api\ApiInvoiceController.cs" />
+    <Compile Include="Controllers\Api\MovementsController.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\CreditCardController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />

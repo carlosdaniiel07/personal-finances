@@ -112,6 +112,7 @@
                             <th>AccountingDate</th>
                             <th>Total value</th>
                             <th>Category</th>
+                            <th>Credit card</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -131,6 +132,16 @@
                                 <td>@movement.AccountingDate.ToShortDateString()</td>
                                 <td>@movement.TotalValue.ToString("F2")</td>
                                 <td>@movement.Category.Name</td>
+                                <td class="text-center">
+                                    @if (movement.Invoice != null)
+                                    {
+                                        <i class="fa fa-check text-green" title="@movement.Invoice.CreditCard.Name"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa fa-times text-red"></i>
+                                    }
+                                </td>
                                 @if (movement.MovementStatus.Equals(MovementStatus.Launched))
                                 {
                                     <td class="text-green"><i class="fa fa-check"></i> @movement.MovementStatus</td>

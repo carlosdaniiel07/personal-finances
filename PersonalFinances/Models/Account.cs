@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 using PersonalFinances.Services;
@@ -6,7 +7,7 @@ using PersonalFinances.Models.Enums;
 
 namespace PersonalFinances.Models
 {
-    public class Account
+    public class Account : IComparable
     {
         public int Id { get; set; }
 
@@ -55,5 +56,11 @@ namespace PersonalFinances.Models
         }
 
         private AccountService _service = new AccountService();
+
+        public int CompareTo(object obj)
+        {
+            var otherObj = (Account)obj;
+            return Id.CompareTo(otherObj.Id);
+        }
     }
 }

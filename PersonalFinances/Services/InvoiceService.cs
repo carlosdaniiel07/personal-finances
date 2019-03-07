@@ -74,7 +74,7 @@ namespace PersonalFinances.Services
         public Invoice CreateInvoiceObject (CreditCard creditCard, DateTime accountingDate)
         {
             var reference = GetInvoiceReferenceByAccountingDate(int.Parse(creditCard.InvoiceClosure), accountingDate);
-            var maturityDate = DateTime.ParseExact($"{creditCard.PayDay}/{reference}", "d/MMM/yy",
+            var maturityDate = DateTime.ParseExact($"{creditCard.PayDay}/{reference}", "d/MMM/yyyy",
                 System.Globalization.CultureInfo.InstalledUICulture).AddMonths(1);
 
             return new Invoice
@@ -158,7 +158,7 @@ namespace PersonalFinances.Services
 
             foreach (var range in ranges)
                 if (accountingDate > range[0] && accountingDate <= range[1])
-                    return string.Concat(range[1].ToString("MMM"), "/", range[1].Year.ToString("yyyy"));
+                    return string.Concat(range[1].ToString("MMM"), "/", range[1].ToString("yyyy"));
 
             return string.Empty;
         }

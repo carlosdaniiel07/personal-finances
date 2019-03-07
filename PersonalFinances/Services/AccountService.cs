@@ -12,7 +12,7 @@ namespace PersonalFinances.Services
     public class AccountService
     {
         private AccountRepository _repository = new AccountRepository();
-        private MovementRepository _movementRepository = new MovementRepository();
+        private MovementService _movementService;
 
         /// <summary>
         /// Get all accounts
@@ -62,7 +62,17 @@ namespace PersonalFinances.Services
         /// <returns></returns>
         public async Task AdjustBalance (IEnumerable<Account> accounts)
         {
-            await _repository.Update(accounts.Select((a) => { a.Balance = (a.InitialBalance + a.TotalCredit) - a.TotalDebit; return a; }));
+            var accountsCollection = new List<Account>();
+            _movementService = new MovementService();
+
+            foreach (var account in accounts.Distinct())
+            {
+                var obj = await GetById(account.Id);
+                obj.Balance = (obj.InitialBalance + obj.TotalCredit) - obj.TotalDebit;
+                accountsCollection.Add(obj);
+            }
+
+            await _repository.Update(accountsCollection);
         }
 
         /// <summary>
