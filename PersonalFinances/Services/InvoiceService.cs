@@ -110,7 +110,8 @@ namespace PersonalFinances.Services
                 CategoryId = paymentCategory.Id,
                 SubcategoryId = creditCardSubcategory.Id,
                 MovementStatus = MovementStatus.Launched,
-                CanEdit = false
+                CanEdit = false,
+                AutomaticallyLaunch = invoicePaymentViewModel.AutomaticallyLaunch
             };
         }
 

@@ -209,6 +209,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
     <Compile Include="Controllers\Api\MovementsController.cs" />
+    <Compile Include="Controllers\Api\TransfersController.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
     <Compile Include="Controllers\CreditCardController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
@@ -245,6 +246,10 @@
     <Compile Include="Migrations\201903041825458_CreditCardAndInvoiceAdjusts.cs" />
     <Compile Include="Migrations\201903041825458_CreditCardAndInvoiceAdjusts.Designer.cs">
       <DependentUpon>201903041825458_CreditCardAndInvoiceAdjusts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903090314029_MovementAndTransferAdjusts.cs" />
+    <Compile Include="Migrations\201903090314029_MovementAndTransferAdjusts.Designer.cs">
+      <DependentUpon>201903090314029_MovementAndTransferAdjusts.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
@@ -434,6 +439,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903041825458_CreditCardAndInvoiceAdjusts.resx">
       <DependentUpon>201903041825458_CreditCardAndInvoiceAdjusts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903090314029_MovementAndTransferAdjusts.resx">
+      <DependentUpon>201903090314029_MovementAndTransferAdjusts.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -140,7 +140,8 @@ namespace PersonalFinances.Services
         {
             var movements = await _repository.GetAllPendingMovements();
 
-            var pendingMovements = movements.Where(m => m.AccountingDate.CompareTo(DateTime.Today) < 0 && m.Invoice == null)
+            var pendingMovements = movements.Where(m => m.AccountingDate.CompareTo(DateTime.Today) < 0 && m.Invoice == null
+                && m.AutomaticallyLaunch)
             .Select((m) =>
             {
                 m.MovementStatus = MovementStatus.Launched;

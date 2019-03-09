@@ -75,6 +75,17 @@
                             </div>
 
                             <div class="row">
+                                <div class="col-md-4">
+                                    <div class="checkbox">
+                                        <label title="If you check this field, the movement will be automatically launched when expires">
+                                            @Html.CheckBoxFor(i => i.AutomaticallyLaunch)
+                                            @Html.DisplayNameFor(i => i.AutomaticallyLaunch)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         @Html.LabelFor(i => i.AccountId)

@@ -14,6 +14,9 @@ namespace PersonalFinances.Models.ViewModels
         [Display(Name = "Value to pay")]
         public double PaidValue { get; set; }
 
+        [Display(Name = "Automatically launch")]
+        public bool AutomaticallyLaunch { get; set; }
+
         [Display(Name = "Account")]
         public int AccountId { get; set; }
 

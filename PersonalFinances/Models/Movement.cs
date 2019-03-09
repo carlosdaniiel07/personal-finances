@@ -68,6 +68,9 @@ namespace PersonalFinances.Models
 
         public bool CanEdit { get; set; }
 
+        [Display(Name = "Automatically launch")]
+        public bool AutomaticallyLaunch { get; set; }
+
         [Display(Name = "Total value")]
         public double TotalValue
         {
