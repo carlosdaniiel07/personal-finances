@@ -6,7 +6,7 @@ namespace PersonalFinances.Migrations
 
     internal sealed class Configuration : DbMigrationsConfiguration<Repositories.DatabaseContext>
     {
-        private readonly bool _seedDatabase = false;
+        private readonly bool _seedDatabase = true;
 
         public Configuration()
         {
