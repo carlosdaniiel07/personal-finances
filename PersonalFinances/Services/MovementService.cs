@@ -129,7 +129,7 @@ namespace PersonalFinances.Services
             await _repository.Remove(movement);
 
             if (movement.MovementStatus.Equals(MovementStatus.Launched))
-                await _accountService.AdjustBalance(movement.Account.Id);
+                await _accountService.AdjustBalance(movement.AccountId);
         }
 
         /// <summary>
