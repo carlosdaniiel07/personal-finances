@@ -8,6 +8,7 @@
     SelectList subcategoriesComboBox = new SelectList(Model.Subcategories, "Id", "Name", "Category.Name", new { });
     SelectList movementStatusComboBox = new SelectList(Enum.GetNames(typeof(MovementStatus)));
     SelectList projectsComboBox = new SelectList(Model.Projects, "Id", "Name", new { });
+    SelectList creditCardsComboBox = new SelectList(Model.CreditCards, "Id", "Name", new { });
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -87,6 +88,15 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
+                                        @Html.LabelFor(m => m.Movement.InvoiceId)
+                                        @Html.DropDownListFor(m => m.Movement.InvoiceId, creditCardsComboBox, "(Optional)", new { Class = "selectpicker form-control" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
                                         @Html.LabelFor(m => m.Movement.CategoryId)
                                         @Html.DropDownListFor(m => m.Movement.CategoryId, categoriesComboBox, "(Choose one)", new { Class = "selectpicker form-control" })
                                     </div>
@@ -113,6 +123,17 @@
                                     <div class="form-group">
                                         @Html.LabelFor(m => m.Movement.MovementStatus)
                                         @Html.DropDownListFor(m => m.Movement.MovementStatus, movementStatusComboBox, new { Class = "selectpicker form-control" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="checkbox">
+                                        <label title="If you check this field, the movement will be automatically launched when expires">
+                                            @Html.CheckBoxFor(m => m.Movement.AutomaticallyLaunch)
+                                            @Html.DisplayNameFor(m => m.Movement.AutomaticallyLaunch)
+                                        </label>
                                     </div>
                                 </div>
                             </div>

@@ -63,6 +63,11 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.DynamicData" />
@@ -70,6 +75,14 @@
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -176,6 +189,15 @@
     <Content Include="Views\Projects\Details.cshtml" />
     <Content Include="Views\Projects\Delete.cshtml" />
     <Content Include="Views\Reports\BankStatement.cshtml" />
+    <Content Include="Views\CreditCards\Index.cshtml" />
+    <Content Include="Views\CreditCards\New.cshtml" />
+    <Content Include="Views\CreditCards\Edit.cshtml" />
+    <Content Include="Views\CreditCards\Remove.cshtml" />
+    <Content Include="Views\CreditCards\View.cshtml" />
+    <Content Include="Views\Invoices\Details.cshtml" />
+    <Content Include="Views\Invoices\Print.cshtml" />
+    <Content Include="Views\Invoices\Pay.cshtml" />
+    <Content Include="Views\Invoices\RemoveMovement.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -184,10 +206,15 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountsController.cs" />
+    <Compile Include="Controllers\Api\MovementsController.cs" />
+    <Compile Include="Controllers\Api\TransfersController.cs" />
     <Compile Include="Controllers\CategoriesController.cs" />
+    <Compile Include="Controllers\CreditCardController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\ErrorsController.cs" />
+    <Compile Include="Controllers\InvoicesController.cs" />
     <Compile Include="Controllers\MovementsController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Controllers\ReportsController.cs" />
@@ -212,19 +239,36 @@
     <Compile Include="Migrations\201902162156441_ProjectEntityAdjusts.Designer.cs">
       <DependentUpon>201902162156441_ProjectEntityAdjusts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903021817015_CreditCardAndInvoice.cs" />
+    <Compile Include="Migrations\201903021817015_CreditCardAndInvoice.Designer.cs">
+      <DependentUpon>201903021817015_CreditCardAndInvoice.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903041825458_CreditCardAndInvoiceAdjusts.cs" />
+    <Compile Include="Migrations\201903041825458_CreditCardAndInvoiceAdjusts.Designer.cs">
+      <DependentUpon>201903041825458_CreditCardAndInvoiceAdjusts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903090314029_MovementAndTransferAdjusts.cs" />
+    <Compile Include="Migrations\201903090314029_MovementAndTransferAdjusts.Designer.cs">
+      <DependentUpon>201903090314029_MovementAndTransferAdjusts.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\Category.cs" />
+    <Compile Include="Models\CreditCard.cs" />
     <Compile Include="Models\Enums\AccountType.cs" />
+    <Compile Include="Models\Enums\InvoiceStatus.cs" />
     <Compile Include="Models\Enums\MovementStatus.cs" />
     <Compile Include="Models\Enums\ProjectStatus.cs" />
     <Compile Include="Models\Error.cs" />
+    <Compile Include="Models\Invoice.cs" />
     <Compile Include="Models\Movement.cs" />
     <Compile Include="Models\Project.cs" />
     <Compile Include="Models\Subcategory.cs" />
     <Compile Include="Models\Transfer.cs" />
     <Compile Include="Models\ViewModels\BankStatementViewModel.cs" />
+    <Compile Include="Models\ViewModels\CreditCardViewModel.cs" />
     <Compile Include="Models\ViewModels\DashboardViewModel.cs" />
+    <Compile Include="Models\ViewModels\InvoicePaymentViewModel.cs" />
     <Compile Include="Models\ViewModels\MovementViewModel.cs" />
     <Compile Include="Models\ViewModels\SubcategoryViewModel.cs" />
     <Compile Include="Models\ViewModels\TransferViewModel.cs" />
@@ -234,17 +278,22 @@
     </Compile>
     <Compile Include="Repositories\AccountRepository.cs" />
     <Compile Include="Repositories\CategoryRepository.cs" />
+    <Compile Include="Repositories\CreditCardRepository.cs" />
     <Compile Include="Repositories\DatabaseContext.cs" />
+    <Compile Include="Repositories\InvoiceRepository.cs" />
     <Compile Include="Repositories\MovementRepository.cs" />
     <Compile Include="Repositories\ProjectRepository.cs" />
     <Compile Include="Repositories\SubcategoryRepository.cs" />
     <Compile Include="Repositories\TransferRepository.cs" />
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\CategoryService.cs" />
+    <Compile Include="Services\CreditCardService.cs" />
     <Compile Include="Services\Exceptions\AlreadyExistsException.cs" />
+    <Compile Include="Services\Exceptions\InvoiceNotFoundException.cs" />
     <Compile Include="Services\Exceptions\NotValidOperationException.cs" />
     <Compile Include="Services\Exceptions\ModelValidationException.cs" />
     <Compile Include="Services\Exceptions\NotFoundException.cs" />
+    <Compile Include="Services\InvoiceService.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\MovementService.cs" />
     <Compile Include="Services\ProjectService.cs" />
@@ -384,6 +433,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201902162156441_ProjectEntityAdjusts.resx">
       <DependentUpon>201902162156441_ProjectEntityAdjusts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903021817015_CreditCardAndInvoice.resx">
+      <DependentUpon>201903021817015_CreditCardAndInvoice.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903041825458_CreditCardAndInvoiceAdjusts.resx">
+      <DependentUpon>201903041825458_CreditCardAndInvoiceAdjusts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903090314029_MovementAndTransferAdjusts.resx">
+      <DependentUpon>201903090314029_MovementAndTransferAdjusts.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

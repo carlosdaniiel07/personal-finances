@@ -13,10 +13,13 @@ namespace PersonalFinances.Repositories
         public DbSet<Movement> Movements { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<Project> Projects { get; set; }
+        public DbSet<CreditCard> CreditCards { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
 
         public DatabaseContext() 
-            : base("ConnectionString")
+            : base("LocalConnectionString")
         {
+            Configuration.LazyLoadingEnabled = true;
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

@@ -14,6 +14,7 @@
     SelectList subcategoriesComboBox = new SelectList(Model.Subcategories, "Id", "Name", "Category.Name", new { });
     SelectList movementStatusComboBox = new SelectList(Enum.GetNames(typeof(MovementStatus)));
     SelectList projectsComboBox = new SelectList(Model.Projects, "Id", "Name", new { });
+    SelectList creditCardsComboBox = new SelectList(Model.CreditCards, "Id", "Name", new { });
 }
 
 <!-- Content Wrapper. Contains page content -->
@@ -47,34 +48,36 @@
                         </div>
                     </div>
                     <div class="box-body">
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Project</th>
-                                    <th>Budget</th>
-                                    <th>Balance</th>
-                                    <th>Left budget</th>
-                                    <th>Budget used (%)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var project in Model.Projects)
-                                {
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped">
+                                <thead>
                                     <tr>
-                                        <td>@project.Name</td>
-                                        <td>@project.Budget.GetValueOrDefault().ToString("F2")</td>
-                                        <td>@project.ProjectBalance.ToString("F2")</td>
-                                        <td>@project.LeftBudget.ToString("F2")</td>
-                                        <td>
-                                            @{ var projectBudgetUsedPercentage = project.BudgetUsedPercentage; }
-                                            <div class="progress progress-xs" title="@projectBudgetUsedPercentage%">
-                                                <div class="progress-bar progress-bar-danger" style="width: @Math.Ceiling(projectBudgetUsedPercentage)%"></div>
-                                            </div>
-                                        </td>
+                                        <th>Project</th>
+                                        <th>Budget</th>
+                                        <th>Balance</th>
+                                        <th>Left budget</th>
+                                        <th>Budget used (%)</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach (var project in Model.Projects)
+                                    {
+                                        <tr>
+                                            <td>@project.Name</td>
+                                            <td>@project.Budget.GetValueOrDefault().ToString("F2")</td>
+                                            <td>@project.ProjectBalance.ToString("F2")</td>
+                                            <td>@project.LeftBudget.ToString("F2")</td>
+                                            <td>
+                                                @{ var projectBudgetUsedPercentage = Math.Round(project.BudgetUsedPercentage, 2); }
+                                                <div class="progress progress-xs" title="@projectBudgetUsedPercentage%">
+                                                    <div class="progress-bar progress-bar-danger" style="width: @Math.Ceiling(projectBudgetUsedPercentage)%"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <!-- /.projects-box -->
@@ -150,6 +153,15 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
+                                                @Html.LabelFor(m => m.Movement.InvoiceId)
+                                                @Html.DropDownListFor(m => m.Movement.InvoiceId, creditCardsComboBox, "(Optional)", new { Class = "selectpicker form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
                                                 @Html.LabelFor(m => m.Movement.CategoryId)
                                                 @Html.DropDownListFor(m => m.Movement.CategoryId, categoriesComboBox, "(Choose one)", new { Class = "selectpicker form-control" })
                                             </div>
@@ -176,6 +188,17 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(m => m.Movement.MovementStatus)
                                                 @Html.DropDownListFor(m => m.Movement.MovementStatus, movementStatusComboBox, new { Class = "selectpicker form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="checkbox">
+                                                <label title="If you check this field, the movement will be automatically launched when expires">
+                                                    @Html.CheckBoxFor(m => m.Movement.AutomaticallyLaunch)
+                                                    @Html.DisplayNameFor(m => m.Movement.AutomaticallyLaunch)
+                                                </label>
                                             </div>
                                         </div>
                                     </div>

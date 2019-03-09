@@ -9,5 +9,6 @@ namespace PersonalFinances.Models.ViewModels
         public IEnumerable<Category> Categories { get; set; }
         public IEnumerable<Subcategory> Subcategories { get; set; }
         public IEnumerable<Project> Projects { get; set; }
+        public IEnumerable<CreditCard> CreditCards { get; set; }
     }
 }

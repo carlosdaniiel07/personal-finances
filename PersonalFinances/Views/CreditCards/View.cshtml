@@ -1,0 +1,131 @@
+﻿@model PersonalFinances.Models.CreditCard
+
+@{
+    ViewBag.Title = "View credit card";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @ViewBag.Title
+            <small>View and manage your credit card</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("Index", "CreditCards")">Credit cards</a></li>
+            <li class="active">@ViewBag.Title</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <!-- box -->
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form role="form">
+                            <div class="row">
+                                <div class="col-xs-2">
+                                    <div class="form-group">
+                                        @Html.LabelFor(c => c.Id)
+                                        @Html.TextBoxFor(c => c.Id, new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                @Html.LabelFor(c => c.Name)
+                                @Html.TextBoxFor(c => c.Name, new { Class = "form-control", Readonly = "readonly" })
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(c => c.Limit)
+                                        @Html.TextBoxFor(c => c.Limit, new { Class = "form-control", Readonly = "readonly", Value = Model.Limit.ToString("F2") })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(c => c.RemainingLimit)
+                                        @Html.TextBoxFor(c => c.RemainingLimit, new { Class = "form-control", Readonly = "readonly", Value = Model.RemainingLimit.ToString("F2") })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(c => c.InvoiceClosure)
+                                        @Html.TextBoxFor(c => c.InvoiceClosure, new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(c => c.PayDay)
+                                        @Html.TextBoxFor(c => c.PayDay, new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+
+                            <a href="@Url.Action("Edit", "CreditCards", new { Id = Model.Id})" class="btn btn-sm btn-warning btn-flat pull-left"><i class="fa fa-pencil-square-o"></i> Edit card</a>
+                            <a href="@Url.Action("Remove", "CreditCards", new { Id = Model.Id })" class="btn btn-sm btn-danger btn-flat pull-left"><i class="fa fa-trash-o"></i> Remove card</a>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+        <!-- table-box -->
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Invoices</h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table class="table table-bordered table-hover datatable" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Maturity date</th>
+                            <th>Payment date</th>
+                            <th>Total value</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var invoice in Model.Invoices)
+                        {
+                            <tr>
+                                <td>@invoice.Reference</td>
+                                <td>@invoice.MaturityDate.ToShortDateString()</td>
+                                <td>@invoice.PaymentDate.GetValueOrDefault().ToShortDateStringDefaultIfNull()</td>
+                                <td>@invoice.TotalValue.ToString("F2")</td>
+                                <td><span class="label label-primary">@invoice.InvoiceStatus</span></td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        <a class="btn btn-flat btn-sm btn-default" href="@Url.Action("Details", "Invoices", new { Id = invoice.Id })"><i class="fa fa-eye"></i> Details</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- ./table-box -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

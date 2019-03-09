@@ -41,6 +41,9 @@ namespace PersonalFinances.Models
         [Display(Name = "Status")]
         public MovementStatus TransferStatus { get; set; }
 
+        [Display(Name = "Automatically launch")]
+        public bool AutomaticallyLaunch { get; set; }
+
         public string Observation { get; set; }
 
         [Display(Name = "Total value")]

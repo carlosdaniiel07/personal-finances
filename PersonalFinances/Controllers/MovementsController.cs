@@ -17,6 +17,7 @@ namespace PersonalFinances.Controllers
         private CategoryService _categoryService = new CategoryService();
         private SubcategoryService _subcategoryService = new SubcategoryService();
         private ProjectService _projectService = new ProjectService();
+        private CreditCardService _creditCardService = new CreditCardService();
 
         // GET: Movements
         public async Task<ActionResult> Index()
@@ -54,7 +55,7 @@ namespace PersonalFinances.Controllers
             }
             else
             {
-                return View(GetViewModel(movement));
+                return View(await GetViewModel(movement));
             }
         }
 
@@ -74,11 +75,11 @@ namespace PersonalFinances.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete (int id)
+        public async Task<ActionResult> Delete (int Id)
         {
             try
             {
-                await _service.Delete(id);
+                await _service.Delete(Id);
                 return RedirectToAction(nameof(Index));
             }
             catch (NotFoundException e)
@@ -136,7 +137,7 @@ namespace PersonalFinances.Controllers
             }
             else
             {
-                return View(GetViewModel(movement));
+                return View(await GetViewModel(movement));
             }
         }
 
@@ -167,7 +168,8 @@ namespace PersonalFinances.Controllers
                 Accounts = await _accountService.GetAll(),
                 Categories = await _categoryService.GetAll(),
                 Subcategories = await _subcategoryService.GetAll(),
-                Projects = await _projectService.GetAllActiveProjects()
+                Projects = await _projectService.GetAllActiveProjects(),
+                CreditCards = await _creditCardService.GetAll()
             };
         }
     }

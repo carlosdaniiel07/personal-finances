@@ -123,6 +123,7 @@
                                     <th>Increase</th>
                                     <th>Decrease</th>
                                     <th>Account</th>
+                                    <th>Credit card</th>
                                     <th>Category</th>
                                     <th>Subcategory</th>
                                     <th>Project</th>
@@ -149,6 +150,14 @@
                                         <td>@movement.Increase.GetValueOrDefault().ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</td>
                                         <td>@movement.Decrease.GetValueOrDefault().ToString("F2", System.Globalization.CultureInfo.InvariantCulture)</td>
                                         <td>@movement.Account.Name</td>
+                                        @if (movement.Invoice != null)
+                                        {
+                                            <td>@movement.Invoice.CreditCard.Name</td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
                                         <td>@movement.Category.Name</td>
                                         <td>@movement.Subcategory.Name</td>
                                         @{ 

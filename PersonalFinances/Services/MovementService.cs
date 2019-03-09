@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 
@@ -14,6 +15,8 @@ namespace PersonalFinances.Services
     {
         private MovementRepository _repository = new MovementRepository();
         private AccountService _accountService = new AccountService();
+        private CreditCardService _creditCardService = new CreditCardService();
+        private InvoiceService _invoiceService = new InvoiceService();
 
         /// <summary>
         /// Add a new movement
@@ -24,60 +27,95 @@ namespace PersonalFinances.Services
             movement.Increase = movement.Increase ?? 0;
             movement.Decrease = movement.Decrease ?? 0;
             movement.InclusionDate = DateTime.Now;
+            movement.CanEdit = true;
+
+            var creditCardId = movement.InvoiceId;
+
+            if (creditCardId.HasValue)
+            {
+                var creditCard = await _creditCardService.GetById(creditCardId.Value);
+
+                _creditCardService.CanBeUsed(creditCard, movement);
+
+                try
+                {
+                    movement.InvoiceId = (await _creditCardService.GetInvoiceByAccountingDate(creditCard.Id, movement.AccountingDate)).Id;
+                }
+                catch (InvoiceNotFoundException)
+                {
+                    var createdInvoice = _invoiceService.CreateInvoiceObject(creditCard, movement.AccountingDate);
+                    _invoiceService.Insert(createdInvoice);
+                    movement.InvoiceId = (await _creditCardService.GetInvoiceByAccountingDate(creditCard.Id, movement.AccountingDate)).Id;
+                }
+
+                movement.MovementStatus = MovementStatus.Pending;
+            }
 
             await _repository.Insert(movement);
 
-            if (movement.MovementStatus.Equals(MovementStatus.Launched))
-                await _accountService.AdjustBalance(movement.AccountId, movement.Type, movement.TotalValue);
+            if (movement.MovementStatus.Equals(MovementStatus.Launched) && !movement.InvoiceId.HasValue)
+                await _accountService.AdjustBalance(movement.AccountId);
         }
 
         /// <summary>
         /// Update an existing movement
         /// </summary>
         /// <param name="movement"></param>
-        public async Task Update(Movement movement)
+        public async Task Update (Movement movement)
         {
             var oldMovement = await GetById(movement.Id);
 
-            movement.Increase = movement.Increase ?? 0;
-            movement.Decrease = movement.Decrease ?? 0;
-            var dif = Math.Abs(movement.TotalValue - oldMovement.TotalValue);
-
-            if(movement.MovementStatus.Equals(MovementStatus.Launched))
+            if (oldMovement.CanEdit)
             {
-                if(movement.AccountId.Equals(oldMovement.Account.Id))
+                movement.Increase = movement.Increase ?? 0;
+                movement.Decrease = movement.Decrease ?? 0;
+                movement.CanEdit = oldMovement.CanEdit;
+
+                var creditCardId = movement.InvoiceId;
+
+                if (creditCardId.HasValue)
                 {
-                    if (oldMovement.MovementStatus.Equals(MovementStatus.Pending))
+                    var creditCard = await _creditCardService.GetById(creditCardId.Value);
+
+                    _creditCardService.CanBeUsed(creditCard, movement);
+
+                    try
                     {
-                        await _accountService.AdjustBalance(movement.AccountId, movement.Type, movement.TotalValue);
+                        movement.InvoiceId = _creditCardService.GetInvoiceByAccountingDate(creditCard.Id, movement.AccountingDate).Id;
                     }
-                    else
+                    catch (InvoiceNotFoundException)
                     {
-                        string operation;
-
-                        if (movement.Type.Equals("C"))
-                            operation = (movement.TotalValue > oldMovement.TotalValue) ? "C" : "D";
-                        else
-                            operation = (movement.TotalValue > oldMovement.TotalValue) ? "D" : "C";
-
-                        await _accountService.AdjustBalance(movement.AccountId, operation, dif);
+                        var createdInvoice = _invoiceService.CreateInvoiceObject(creditCard, movement.AccountingDate);
+                        _invoiceService.Insert(createdInvoice);
+                        movement.InvoiceId = _creditCardService.GetInvoiceByAccountingDate(creditCard.Id, movement.AccountingDate).Id;
                     }
-                }
-                else
-                {
-                    if (oldMovement.MovementStatus.Equals(MovementStatus.Launched))
-                        await _accountService.AdjustBalance(oldMovement.Account.Id, GetInverseOperation(movement.Type), oldMovement.TotalValue);
 
-                    await _accountService.AdjustBalance(movement.AccountId, movement.Type, movement.TotalValue);
+                    movement.MovementStatus = MovementStatus.Pending;
                 }
+
+                await _repository.Update(movement);
+
+                if (!oldMovement.Account.Id.Equals(movement.AccountId))
+                    await _accountService.AdjustBalance(oldMovement.Account.Id);
+                await _accountService.AdjustBalance(movement.AccountId);
             }
             else
             {
-                if(oldMovement.MovementStatus.Equals(MovementStatus.Launched))
-                    await _accountService.AdjustBalance(oldMovement.AccountId, GetInverseOperation(oldMovement.Type), oldMovement.TotalValue);
+                throw new NotValidOperationException("This movement was generated by another routine and cannot be changed");
             }
-            
-            await _repository.Update(movement);
+        }
+
+        /// <summary>
+        /// Update a collection of movements
+        /// </summary>
+        /// <param name="movements"></param>
+        /// <returns></returns>
+        public async Task Update (IEnumerable<Movement> movements, bool adjustAccountsBalance)
+        {
+            await _repository.Update(movements);
+
+            if (adjustAccountsBalance)
+                await _accountService.AdjustBalance(movements.Select(m => m.Account));
         }
 
         /// <summary>
@@ -88,10 +126,29 @@ namespace PersonalFinances.Services
         {
             var movement = await GetById(id);
 
-            if (movement.MovementStatus.Equals(MovementStatus.Launched))
-                await _accountService.AdjustBalance(movement.Account.Id, GetInverseOperation(movement.Type), movement.TotalValue);
-
             await _repository.Remove(movement);
+
+            if (movement.MovementStatus.Equals(MovementStatus.Launched))
+                await _accountService.AdjustBalance(movement.Account.Id);
+        }
+
+        /// <summary>
+        /// Update status of all movements that already is expired
+        /// </summary>
+        /// <returns></returns>
+        public async Task UpdateMovementsStatusOfPendingMovements ()
+        {
+            var movements = await _repository.GetAllPendingMovements();
+
+            var pendingMovements = movements.Where(m => m.AccountingDate.CompareTo(DateTime.Today) < 0 && m.Invoice == null
+                && m.AutomaticallyLaunch)
+            .Select((m) =>
+            {
+                m.MovementStatus = MovementStatus.Launched;
+                return m;
+            }).ToList();
+
+            await Update(pendingMovements, true);
         }
 
         /// <summary>
@@ -107,9 +164,19 @@ namespace PersonalFinances.Services
         /// Get all movements (filter by account and accounting date range)
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<Movement>> GetAll (BankStatementViewModel bankStatement)
+        public async Task<IEnumerable<Movement>> GetAll(BankStatementViewModel bankStatement)
         {
             return await _repository.GetAllMovements(bankStatement);
+        }
+
+        /// <summary>
+        /// Get all movements from a specified account
+        /// </summary>
+        /// <param name="accountId"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Movement>> GetAll (int accountId)
+        {
+            return await _repository.GetMovementsByAccount(accountId);
         }
 
         /// <summary>

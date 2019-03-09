@@ -1,0 +1,73 @@
+﻿@model PersonalFinances.Models.ViewModels.CreditCardViewModel
+
+@{
+    ViewBag.Title = "New credit card";
+    SelectList availAbleDays = new SelectList(Model.AvailableDays);
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @ViewBag.Title
+            <small>Add a new card</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("Index", "CreditCards")">Credit cards</a></li>
+            <li class="active">@ViewBag.Title</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <!-- box -->
+        <div class="box box-success">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form role="form" action="@Url.Action("New", "CreditCards")" method="post">
+                            <span class="text-red">@Html.ValidationSummary()</span>
+
+                            <div class="form-group">
+                                @Html.LabelFor(c => c.CreditCard.Name)
+                                @Html.TextBoxFor(c => c.CreditCard.Name, new { Class = "form-control" })
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(c => c.CreditCard.InvoiceClosure)
+                                        @Html.DropDownListFor(c => c.CreditCard.InvoiceClosure, availAbleDays, new { Class = "form-control selectpicker" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(c => c.CreditCard.PayDay)
+                                        @Html.DropDownListFor(c => c.CreditCard.PayDay, availAbleDays, new { Class = "form-control selectpicker" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(c => c.CreditCard.Limit)
+                                        @Html.TextBoxFor(c => c.CreditCard.Limit, new { Class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            @Html.AntiForgeryToken()
+
+                            <button type="submit" class="btn btn-success btn-flat pull-left"><i class="fa fa-check"></i> Confirm</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
