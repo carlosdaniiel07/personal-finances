@@ -81,7 +81,8 @@ namespace PersonalFinances.Services
 
                     try
                     {
-                        movement.InvoiceId = _creditCardService.GetInvoiceByAccountingDate(creditCard.Id, movement.AccountingDate).Id;
+                        var invoiceId = (await _creditCardService.GetInvoiceByAccountingDate(creditCard.Id, movement.AccountingDate)).Id;
+                        movement.InvoiceId = invoiceId;
                     }
                     catch (InvoiceNotFoundException)
                     {
