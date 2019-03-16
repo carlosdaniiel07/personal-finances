@@ -29,6 +29,7 @@ namespace PersonalFinances.Services
         public async Task Add (Category category)
         {
             category.Enabled = true;
+            category.CanEdit = true;
 
             var nameExists = await _repository.GetCategoryByName(category.Name, category.Type) != null;
 
