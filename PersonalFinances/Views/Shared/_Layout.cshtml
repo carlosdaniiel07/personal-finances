@@ -1,31 +1,32 @@
 ﻿@using System.Web.Optimization
 @using WebHelpers.Mvc5.Enum
+
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>
-        @ViewBag.Title | Personal Finances App
-    </title>
-    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-    @Styles.Render("~/Bundles/css")
-</head>
-<body class="hold-transition skin-blue sidebar-mini">
-    <div class="wrapper">
-        @Html.Partial("_Header")
-        @Html.Partial("_Sidebar")
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>
+            @ViewBag.Title | Personal Finances App
+        </title>
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+        @Styles.Render("~/Bundles/css")
+    </head>
+    <body class="hold-transition skin-blue sidebar-mini">
+        <div class="wrapper">
+            @Html.Partial("_Header")
+            @Html.Partial("_Sidebar")
 
-        @RenderBody()
+            @RenderBody()
 
-        @Html.Partial("_ControlSidebar")
-        @Html.Partial("_Footer")
-    </div>
+            @Html.Partial("_ControlSidebar")
+            @Html.Partial("_Footer")
+        </div>
 
-    <script src="@RouteJs.RouteJsHandler.HandlerUrl"></script>
-    <script src="@EnumHandler.HandlerUrl"></script>
-    @Scripts.Render("~/Bundles/js")
-    @RenderSection("ViewSpecificJavascript", required: false)
-</body>
+        <script src="@RouteJs.RouteJsHandler.HandlerUrl"></script>
+        <script src="@EnumHandler.HandlerUrl"></script>
+        @Scripts.Render("~/Bundles/js")
+        @RenderSection("ViewSpecificJavascript", required: false)
+    </body>
 </html>

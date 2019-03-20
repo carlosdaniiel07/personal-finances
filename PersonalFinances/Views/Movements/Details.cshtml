@@ -100,6 +100,15 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
+                                                @Html.LabelFor(m => m.Invoice.CreditCard.Name)
+                                                @Html.TextBoxFor(m => m.Invoice.CreditCard.Name, new { Class = "form-control", Readonly = "readonly" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
                                                 @Html.LabelFor(m => m.Category.Name)
                                                 @Html.TextBoxFor(m => m.Category.Name, new { Class = "form-control", Readonly = "readonly" })
                                             </div>
@@ -126,6 +135,17 @@
                                             <div class="form-group">
                                                 @Html.LabelFor(m => m.MovementStatus)
                                                 @Html.TextBoxFor(m => m.MovementStatus, new { Class = "form-control", Readonly = "readonly" })
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="checkbox">
+                                                <label title="If you check this field, the movement will be automatically launched when expires">
+                                                    @Html.CheckBoxFor(m => m.AutomaticallyLaunch, new { Disabled = "disabled" })
+                                                    @Html.DisplayNameFor(m => m.AutomaticallyLaunch)
+                                                </label>
                                             </div>
                                         </div>
                                     </div>
@@ -169,6 +189,10 @@
                             @if (Model.Project != null)
                             {
                                 <a href="@Url.Action("Details", "Projects", new { Id = Model.Project.Id })" class="list-group-item"><i class="fa fa-external-link"></i> &nbsp; View project</a>
+                            }
+                            @if (Model.Invoice != null)
+                            {
+                                <a href="@Url.Action("View", "CreditCards", new { Id = Model.Invoice.CreditCard.Id })" class="list-group-item"><i class="fa fa-external-link"></i> &nbsp; View credit card</a>
                             }
                         </div>
                     </div>

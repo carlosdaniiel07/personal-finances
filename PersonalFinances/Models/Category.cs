@@ -11,6 +11,7 @@ namespace PersonalFinances.Models
 
         [Required]
         [StringLength(30)]
+        [Display(Name = "Category name")]
         public string Name { get; set; }
 
         [Required]
@@ -18,6 +19,8 @@ namespace PersonalFinances.Models
         public string Type { get; set; }
 
         public bool Enabled { get; set; }
+
+        public bool CanEdit { get; set; }
 
         public virtual ICollection<Subcategory> Subcategories { get; set; } = new List<Subcategory>();
         public virtual ICollection<Movement> Movements { get; set; } = new List<Movement>();

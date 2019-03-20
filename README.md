@@ -1,13 +1,14 @@
 Personal Finances
 ============
-![](https://i.imgur.com/N98iHKU.png)
+![](https://i.imgur.com/HUnSnuo.png)
 
 ## About
-Personal Finances is a simple personal finances managament system. With it you can manage your finances inserting your expenses and your savings in a custom created account and divide them by category and by subcategory. If you want, you also can aggregatte your movements by project, where you can define a end date and a budget if necessary. You also are able to get reports where you can filter by account, category, project, accounting date and others.
+Personal Finances is a simple personal finances managament system. With it you can manage your finances inserting your expenses and your savings in a custom created account and divide them by category and by subcategory. Do you usually use credit cards? No problem! Personal Finances now supports credit cards. If you want, you also can aggregatte your movements by project, where you can define a end date and a budget if necessary. You also are able to get reports where you can filter by account, category, project, accounting date and others.
 
 ## Features
 * Debit and credit movements insertion
 * Transfers between accounts
+* Credit cards
 * Custom categories and subcategories
 * Custom Projects
 * Custom accounts
@@ -15,6 +16,10 @@ Personal Finances is a simple personal finances managament system. With it you c
 * Reports
 
 ## Changelog
+* 1.0.2 - 03/09/2019
+  * New feature: credit cards
+  * Bug fixes
+  
 * 1.0.1 - 02/21/2019
   * Performance increase
   * UI adjusts
@@ -46,5 +51,6 @@ Personal Finances is a simple personal finances managament system. With it you c
      * A relational database like SQL Server, SQLite, MySQL or PostgreSQL (go to [Entity Framework 6 Providers](https://docs.microsoft.com/pt-br/ef/ef6/fundamentals/providers/) to see the supported providers)
   * Clone this repository `https://github.com/carlosdaniiel07/personal-finances.git`
   * Configure your connection string on `Web.config` (see [Connection Strings Reference](https://www.connectionstrings.com/) if you need help)
-  * Generate a database with the command `Update-Database` on Package Manager Console
+  * Make sure that `_seedDatabase` variable is `true` to seed the database on the next step
+  * Generate and seed the database with the command `Update-Database` on Package Manager Console
   * Build and run the application

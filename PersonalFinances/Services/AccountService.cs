@@ -12,7 +12,7 @@ namespace PersonalFinances.Services
     public class AccountService
     {
         private AccountRepository _repository = new AccountRepository();
-        private MovementRepository _movementRepository = new MovementRepository();
+        private MovementService _movementService;
 
         /// <summary>
         /// Get all accounts
@@ -45,12 +45,34 @@ namespace PersonalFinances.Services
         /// </summary>
         /// <param name="accountId"></param>
         /// <param name="ammount"></param>
-        public async Task AdjustBalance (int accountId, string movementType, double ammount)
+        public async Task AdjustBalance (int accountId)
         {
-            if (movementType.Equals("C"))
-                await IncreaseBalance(accountId, ammount);
-            else
-                await DecreaseBalance(accountId, ammount);
+            var account = await _repository.GetAccountById(accountId);
+            var newBalance = (account.InitialBalance + account.TotalCredit) - account.TotalDebit;
+
+            account.Balance = newBalance;
+
+            await _repository.Update(account);
+        }
+
+        /// <summary>
+        /// Adjust the balance of a collection of accounts
+        /// </summary>
+        /// <param name="accounts"></param>
+        /// <returns></returns>
+        public async Task AdjustBalance (IEnumerable<Account> accounts)
+        {
+            var accountsCollection = new List<Account>();
+            _movementService = new MovementService();
+
+            foreach (var account in accounts.Distinct())
+            {
+                var obj = await GetById(account.Id);
+                obj.Balance = (obj.InitialBalance + obj.TotalCredit) - obj.TotalDebit;
+                accountsCollection.Add(obj);
+            }
+
+            await _repository.Update(accountsCollection);
         }
 
         /// <summary>
@@ -156,26 +178,6 @@ namespace PersonalFinances.Services
             double totalDebit = movements.TotalDebit();
 
             return totalCredit - totalDebit;
-        }
-
-        /// <summary>
-        /// Get total credit value from a Movement collection
-        /// </summary>
-        /// <param name="movements"></param>
-        /// <returns></returns>
-        public double TotalCrebit (IEnumerable<Movement> movements)
-        {
-            return movements.TotalCredit();
-        }
-
-        /// <summary>
-        /// Get total debit value from a Movement collection
-        /// </summary>
-        /// <param name="movements"></param>
-        /// <returns></returns>
-        public double TotalDebit (IEnumerable<Movement> movements)
-        {
-            return movements.TotalDebit();
         }
     }
 }

@@ -82,6 +82,19 @@ namespace PersonalFinances.Services
         }
 
         /// <summary>
+        /// Launch all pending transfers
+        /// </summary>
+        /// <returns></returns>
+        public async Task LaunchPendingTransfers ()
+        {
+            var transfers = await _repository.GetAllPendingTransfers();
+            var pendingTransfers = transfers.Where(t => t.AccountingDate.CompareTo(DateTime.Today) < 0 && t.AutomaticallyLaunch).ToList();
+
+            foreach (var transfer in pendingTransfers)
+                await Launch(transfer.Id);
+        }
+
+        /// <summary>
         /// Get a transfer by Id
         /// </summary>
         /// <param name="id"></param>
@@ -121,7 +134,9 @@ namespace PersonalFinances.Services
                 CategoryId = category.Id,
                 SubcategoryId = subcategory.Id,
                 MovementStatus = transfer.TransferStatus,
-                Observation = transfer.Observation
+                Observation = transfer.Observation,
+                CanEdit = false,
+                AutomaticallyLaunch = transfer.AutomaticallyLaunch
             };
         }
 
@@ -151,7 +166,9 @@ namespace PersonalFinances.Services
                 CategoryId = category.Id,
                 SubcategoryId = subcategory.Id,
                 MovementStatus = transfer.TransferStatus,
-                Observation = transfer.Observation
+                Observation = transfer.Observation,
+                CanEdit = false,
+                AutomaticallyLaunch = transfer.AutomaticallyLaunch
             };
         }
     }

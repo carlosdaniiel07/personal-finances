@@ -1,0 +1,171 @@
+﻿@model PersonalFinances.Models.Invoice
+
+@{
+    ViewBag.Title = "Invoice details";
+}
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            @ViewBag.Title
+            <small>View invoice details</small>
+        </h1>
+        <ol class="breadcrumb">
+            <li><a href=""><i class="fa fa-dashboard"></i> Home</a></li>
+            <li><a href="@Url.Action("View", "CreditCards", new { Id = Model.CreditCard.Id })">Credit card</a></li>
+            <li class="active">@ViewBag.Title</li>
+        </ol>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <!-- box -->
+        <div class="box box-primary">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <form role="form">
+                            <div class="row">
+                                <div class="col-xs-2">
+                                    <div class="form-group">
+                                        @Html.LabelFor(i => i.Id)
+                                        @Html.TextBoxFor(i => i.Id, new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
+                                        @Html.LabelFor(i => i.CreditCard.Name)
+                                        @Html.TextBoxFor(i => i.CreditCard.Name, new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(i => i.Reference)
+                                        @Html.TextBoxFor(i => i.Reference, new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(i => i.MaturityDate)
+                                        @Html.TextBox("MaturityDate", Model.MaturityDate.ToShortDateString(), new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(i => i.PaymentDate)
+                                        @Html.TextBox("PaymentDate", Model.PaymentDate.GetValueOrDefault().ToShortDateStringDefaultIfNull(), new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @Html.LabelFor(i => i.TotalValue)
+                                        @Html.TextBox("TotalValue", Model.TotalValue.ToString("F2"), new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        @Html.LabelFor(i => i.InvoiceStatus)
+                                        @Html.TextBoxFor(i => i.InvoiceStatus, new { Class = "form-control", Readonly = "readonly" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+
+                            @if (Model.InvoiceStatus != InvoiceStatus.NotClosed)
+                            {
+                                <a href="@Url.Action("Print", "Invoices", new { Id = Model.Id })" class="btn btn-sm btn-success btn-flat pull-left"><i class="fa fa-print"></i> Print invoice</a>
+                            }
+                            else
+                            {
+                                <a href="#" class="btn btn-sm btn-success btn-flat pull-left disabled"><i class="fa fa-print"></i> Print invoice</a>
+                            }
+                            @if (Model.InvoiceStatus == InvoiceStatus.Pending)
+                            {
+                                <a href="@Url.Action("Pay", "Invoices", new { Id = Model.Id })" class="btn btn-sm btn-primary btn-flat pull-left"><i class="fa fa-money"></i> Pay</a>
+                            }
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+        <!-- table-box -->
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h3 class="box-title">Movements</h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <table class="table table-bordered table-hover datatable" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Accounting date</th>
+                            <th>Description</th>
+                            <th>Value</th>
+                            <th>Category</th>
+                            <th>Subcategory</th>
+                            <th>Project</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var movement in Model.Movements)
+                        {
+                            <tr>
+                                <td>@movement.AccountingDate.ToShortDateString()</td>
+                                <td title="@movement.Description">@movement.Description.Cut()</td>
+                                <td>@movement.TotalValue.ToString("F2")</td>
+                                <td>@movement.Category.Name</td>
+                                <td>@movement.Subcategory.Name</td>
+                                <td>
+                                    @if (movement.Project != null)
+                                    {
+                                        @movement.Project.Name
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group">
+                                        @if (Model.InvoiceStatus == InvoiceStatus.NotClosed)
+                                        {
+                                            <a class="btn btn-xs btn-danger" href="@Url.Action("RemoveMovement", "Invoices", new { Id = movement.Id })"><i class="fa fa-times"></i> Remove from invoice</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="btn btn-xs btn-danger disabled" href="#"><i class="fa fa-times"></i> Remove from invoice</a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- ./table-box -->
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->

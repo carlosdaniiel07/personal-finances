@@ -12,6 +12,7 @@ namespace PersonalFinances.Models
 
         [Required]
         [StringLength(30)]
+        [Display(Name = "Project name")]
         public string Name { get; set; }
 
         [Display(Name = "Start date")]

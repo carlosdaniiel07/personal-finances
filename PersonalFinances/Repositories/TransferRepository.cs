@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 
 using PersonalFinances.Models;
+using PersonalFinances.Models.Enums;
 
 namespace PersonalFinances.Repositories
 {
@@ -21,6 +22,21 @@ namespace PersonalFinances.Repositories
                     .Include(t => t.Origin)
                     .Include(t => t.Target)
                 .ToListAsync();
+            }
+        }
+
+        /// <summary>
+        /// Get all pending transfers
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<Transfer>> GetAllPendingTransfers()
+        {
+            using (DatabaseContext context = new DatabaseContext())
+            {
+                return await context.Transfers
+                    .Include(t => t.Origin)
+                    .Include(t => t.Target)
+                .Where(t => t.TransferStatus == MovementStatus.Pending).ToListAsync();
             }
         }
 
